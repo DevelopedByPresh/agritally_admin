@@ -21,7 +21,7 @@ const AdminProfile = ()=>{
 
     firstName:"",
     lastName:"",
-   // email:"",
+    email:"",
     date_of_birth:"",
     
 
@@ -231,7 +231,7 @@ setTimeout(()=>{
                 {message && 
 
 <div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
-<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+<div className="containers"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
 
@@ -241,7 +241,7 @@ setTimeout(()=>{
 
 {error &&
 <div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
-<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+<div className="containers"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
 

@@ -27,32 +27,38 @@ import FormControl, { useFormControl } from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from "../../Actions/Actions"
+import { ClearError, UpdateOrder,DeleteOrder,  ClearMessage,GetAllOrders} from "../../Actions/Actions"
 
 
 
 
 
 
- const Users=()=> {
-
+ const Orders=()=> {
+    const dispatch = useDispatch()
 
   useEffect(()=>{
     document.body.style.zoom = "70%";
+    dispatch(GetAllOrders())
+    
   
   },[])
 
   const UserInfo = JSON.parse(sessionStorage.getItem('Admin'))
 
   
-  const dispatch = useDispatch()
+
       
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
   const loading = useSelector((state)=>state?.Admin?.loading)
-  const staff = useSelector((state)=>state?.Admin?.staff)
+
+  const orders = useSelector((state)=>state?.Admin?.orders)
 
 
   
@@ -61,30 +67,41 @@ const pages = ['About Us', 'Contact Us'];
 const settings = [ 'Logout', 'Reset Password','Profile', 'Dashboard',];
 const [open, setOpen] = useState(false);
 
-  
+const [tableBodyHeight, setTableBodyHeight] = useState("400px");
+
+const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
+const [searchBtn, setSearchBtn] = useState(true);
+const [downloadBtn, setDownloadBtn] = useState(true);
+const [printBtn, setPrintBtn] = useState(true);
+const [viewColumnBtn, setViewColumnBtn] = useState(true);
+const [filterBtn, setFilterBtn] = useState(true);
 const [anchorElNav, setAnchorElNav] = useState(null);
 const [anchorElUser, setAnchorElUser] = useState(null);
 
 const [openEdit, setOpenEdit] = useState(false);
-const [openDeleteUser, setOpenDeleteUser] = useState(false);
+const [openDeleteOrder, setOpenDeleteOrder] = useState(false);
+const [singleOrder, setSingleOrder] = useState({})
 
-const [user, setUser] = useState({
-  role:''
+const dateOfEntry = singleOrder?.createdAt
+const FormattedDate = (new Date(dateOfEntry))?.toString();
+
+const [order, setOrder] = useState({
+  status:''
 })
 
-const {role} = user
+const {status} = order
 
 
 const handleChange = (e)=>{
   const {name, value} = e.target
-  setUser({...user, [name]:value})
+  setOrder({...order, [name]:value})
 }
 
-const UpdateSingleStaff =(e)=>{
+const UpdateSingleOrder =(e)=>{
   e.preventDefault()
-  const user = {role}
+  const data = {status}
   
-  dispatch(UpdateStaff(user))
+  dispatch(UpdateOrder(data))
  
 }
 
@@ -96,29 +113,23 @@ const UpdateSingleStaff =(e)=>{
 
 
 const Role= [
-  { label: 'staff' },
-  { label: 'owner'  },
-  { label: 'manager' },
-  { label: 'admin' },
-  { label: 'superAdmin' },
+  { label: 'Pending' },
+  { label: 'Approved'  },
+
 
 ];
 
 
-
-useEffect(()=>{
-  dispatch(GetAllStaff())
-},[])
-
-
-
+const handleFocus = ()=>{
+    if(error){
+        dispatch(ClearError())
+    }
+}
 
 
 
-
-
-
-  const handleClickOpen = () => {
+  const handleClickOpen = (order) => {
+    setSingleOrder(order)
     setOpen(true);
   };
 
@@ -126,10 +137,11 @@ useEffect(()=>{
     setOpen(false);
   };
 
-    const handleClickOpenEdit = (user) => {
+    const handleClickOpenEdit = (order) => {
+      
       setOpenEdit(true);
-      sessionStorage.setItem('UserUpdateId', user?._id)
-     setUser({...user});
+      sessionStorage.setItem('OrderUpdateId', order?.id)
+     setOrder(order);
     
   };
 
@@ -140,14 +152,13 @@ useEffect(()=>{
 
 
 
-  const handleClickOpenDeleteUser = (id) => {
-    setOpenDeleteUser(true);
-    sessionStorage.setItem('userId', id)
-  
+  const handleClickOpenDeleteOrder = (id) => {
+    setOpenDeleteOrder(true);
+    sessionStorage.setItem('orderId', id)
 };
 
-const handleClickCloseDeleteUser = () => {
-  setOpenDeleteUser(false);
+const handleClickCloseDeleteOrder = () => {
+  setOpenDeleteOrder(false);
   dispatch(ClearError())
 };
 
@@ -190,7 +201,7 @@ const handleClickCloseDeleteUser = () => {
     if(message){
 
       dispatch(ClearMessage())
-      setOpenDeleteUser(false);
+      setOpenDeleteOrder(false);
       setOpenEdit(false);
      
     }
@@ -204,32 +215,32 @@ const handleClickCloseDeleteUser = () => {
 
   const columns = [
     {
-     name: "First Name",
-     label: "First Name",
+     name: "Date Of Entry",
+     label: "Date Of Entry",
      options: {
       filter: true,
       sort: true,
      }
     },
     {
-     name: "Last Name",
-     label: "Last Name",
+     name: "Quantity",
+     label: "Quantity",
      options: {
       filter: true,
       sort: false,
      }
     },
     {
-     name: "Date Of Birth",
-     label: "Date Of Birth",
+     name: "Unit Price",
+     label: "Unit Price",
      options: {
       filter: true,
       sort: false,
      }
     },
     {
-      name: "Email Address",
-      label: "Email Address",
+      name: "Total",
+      label: "Total",
       options: {
        filter: true,
        sort: false,
@@ -238,8 +249,8 @@ const handleClickCloseDeleteUser = () => {
 
      
      {
-      name: "Phone Number",
-      label: "Phone Number",
+      name: "Status",
+      label: "Status",
       options: {
        filter: true,
        sort: false,
@@ -247,34 +258,44 @@ const handleClickCloseDeleteUser = () => {
      },
 
      {
-      name: "Staff Role",
-      label: "Staff Role",
+      name: "Remark",
+      label: "Remark",
       options: {
        filter: true,
        sort: false,
       }
      },
 
-  
+
    
-
-     {
-      name: "Edit",
-      label: "Edit",
+    {
+      name: "Details",
+      label: "Details",
       options: {
        filter: true,
        sort: false,
       }
      },
 
+
      {
-      name: "Delete",
-      label: "Delete",
-      options: {
-       filter: true,
-       sort: false,
-      }
-     },
+        name: "Edit",
+        label: "Edit",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+
+       {
+        name: "Delete",
+        label: "Delete",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+
 
 
     
@@ -284,27 +305,36 @@ const handleClickCloseDeleteUser = () => {
 
 
    const data =
-   staff &&
-   staff?.map((user) => {
+   orders &&
+   orders?.map((order) => {
+    var date = order?.createdAt,
+    newDate = (new Date(date))?.toString();
 
      return {
-        "First Name": user?.firstName,
-        "Last Name": user?.lastName,
-        'Date Of Birth':user?.date_of_birth,
-        'Email Address': user?.email,
-        'Phone Number':user?.phone,
-        'Staff Role':user?.role,
-        Edit:   (
-          <EditIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpenEdit(user))}`} />
-        ),
+        "Date Of Entry":  newDate,
+        Quantity: order?.cartId?.cartItems?.[0]?.quantity,
+        'Unit Price':  '₦' + order?.cartId?.cartItems?.[0]?.price,
+        'Total': ' ₦' + order?.cartId?.cartItems?.[0]?.subtotal,
+        Status: order?.status,
+        Remark:  order?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
+       
 
-        Delete:   (
-          <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteUser(user?._id))}`}  />
-        ),
+          Details:   (
+            <VisibilityIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpen(order))}`} />
+          ),
+          Edit:   (
+            <EditIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpenEdit(order))}`} />
+          ),
 
+          Delete:   (
+            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteOrder(order?.id))}`}  />
+          ),
   
+
+
      };
    });
+ 
 
 
 
@@ -314,10 +344,20 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-   
-   const options = {
-     filterType: 'checkbox',
-   };
+    
+  const options = {
+    filterType: 'checkbox',
+
+    search: searchBtn,
+    download: downloadBtn,
+    print: printBtn,
+    viewColumns: viewColumnBtn,
+    filter: filterBtn,
+    filterType: "dropdown",
+  
+    tableBodyHeight,
+    tableBodyMaxHeight,
+  };
 
 
 
@@ -464,38 +504,37 @@ const handleClickCloseDeleteUser = () => {
 
 
 
+    {orders?.length > 0 ?
 
-
-
-    {staff?.length > 0 ?
-
-<Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15,} }>
-   All Existing Staff   
-</Typography>: ""}
+    <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15,} }>
+   All Orders Created By Every Staff
+   </Typography>: ""}
 
 <br/>
 
 
 
 
-
    
 
-{staff?.length > 0 ?
+{orders?.length > 0 ?
 
 
-<div style={{width:1800, marginLeft:80}}>
+    <div style={{width:1800, marginLeft:80}}>
 <MUIDataTable
-  title={ `Number of Staff : ${data?.length}`}
+  title={ `Number of Orders : ${data?.length}`}
   data={data}
   columns={columns}
   options={options}
-/>
+ 
 
-</div> :
+/>
+</div> : 
+
+
 
 <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
-     No Existing Staff At the Moment! 
+     No Existing Orders At the Moment! 
    </Typography>}
 
 
@@ -503,7 +542,7 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-    <div>
+<div>
    
       <Dialog
         open={open}
@@ -513,31 +552,40 @@ const handleClickCloseDeleteUser = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {" Order Entry Details"}
-        </DialogTitle>
+        <div id="alert-dialog-title h3" style={{marginTop:20, marginLeft:25}}>
+          <h3 style={{display:'inline'}}> Order  Details  </h3> <h3 style={{display:'inline', marginLeft:'90px'}}> Your Order Transaction Id : {singleOrder?.cartId?._id}</h3> 
+        </div>
       
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-        Customer Name : Precious Mike
+
+           Order Status :  {singleOrder?.status}, Edit To Approve!          {singleOrder?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:10, marginTop:-0.5}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>},
           </DialogContentText>
           <br/>
 
           <DialogContentText id="alert-dialog-description">
-          Date Of Entry : 03 - 2 -2023
+          Date Of Entry : {`${FormattedDate}`}
+          </DialogContentText>
+          <br/>
+
+          <DialogContentText id="alert-dialog-description">
+        Total Quantity : {singleOrder?.cartId?.cartItems?.[0]?.quantity}
+          </DialogContentText><br/>
+
+
+          <DialogContentText id="alert-dialog-description">
+        Order Unit Price :  ₦ { singleOrder?.cartId?.cartItems?.[0]?.price}
           </DialogContentText>
           <br/>
 
 
           <DialogContentText id="alert-dialog-description">
-        Order Amount : $234.78
+        Order Sub Total :  ₦ { singleOrder?.cartId?.cartItems?.[0]?.subtotal}
           </DialogContentText>
           <br/>
 
 
-          <DialogContentText id="alert-dialog-description">
-        Total Quantity&nbsp;(g) : 34.98
-          </DialogContentText>
+       
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
@@ -567,15 +615,20 @@ const handleClickCloseDeleteUser = () => {
 
       >
         <DialogTitle id="alert-dialog-title">
-          {"Change Staff's Role"}
+          {"Approve Order"}
         </DialogTitle>
 
+
+
+
         <form>
+        
         <Box
         sx={{
+       
           p: 1,
           m: 1,
-          mt:5,
+          mt:2,
           bgcolor: 'background.paper',
           borderRadius: 1,
         }}
@@ -584,7 +637,7 @@ const handleClickCloseDeleteUser = () => {
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'60%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -596,7 +649,12 @@ const handleClickCloseDeleteUser = () => {
 {error &&
 <div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
+
+
+
+
 </div>
 </div>  
  }
@@ -610,14 +668,18 @@ const handleClickCloseDeleteUser = () => {
      
 
 <Box sx={{textAlign:'center',  alignItems:'center'}}>
+
+
+  
 <FormControl sx={{  width: 320, alignItems:'center' }}>
-                <InputLabel id="demo-multiple-name-label">Change Role...</InputLabel>
+                <InputLabel id="demo-multiple-name-label">Edit Order...</InputLabel>
                 <Select
                   sx={{ width: 330, height: 55 }}
                   labelId="demo-multiple-name-label"
                   id="demo-multiple-name"
-                  value={role}
-                  name="role"
+                  value={status}
+                  name="status"
+                  onFocus={handleFocus}
                   fullWidth
                  // onFocus={handleFocus}
                   input={<OutlinedInput label="Select State..." />}
@@ -633,17 +695,20 @@ const handleClickCloseDeleteUser = () => {
               </FormControl>
 
         </Box>
- 
+
     </Box><br/>
 
 
+
+
     </form>
-   
+    <br/>
         <DialogActions>
         <div className="form-group focused" style={{marginRight:10}}>
-         <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }}  onClick={UpdateSingleStaff} >
+
+        <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={UpdateSingleOrder} >
             Update
-          </button>
+          </button> 
                  </div>
         </DialogActions>
       </Dialog>
@@ -661,23 +726,30 @@ const handleClickCloseDeleteUser = () => {
     <div>
       
       <Dialog
-        open={openDeleteUser}
-        onClose={handleClickCloseDeleteUser}
+        open={openDeleteOrder}
+        onClose={handleClickCloseDeleteOrder}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
         maxWidth="sm"
 
       >
+     
+
         <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Delete this Staff?"}
+          {"Are You Sure You Want To Permanently delete This Order?"}
         </DialogTitle>
 
 
+
+
         {message && 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'50%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
+
 </div>
 </div>
 }
@@ -685,34 +757,84 @@ const handleClickCloseDeleteUser = () => {
 {error &&
 <div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
+
+
+
+
 </div>
 </div>  
  }
+
+
 
 {loading && error === false ?
           <div className='loader'></div> : ""}
           <br/> 
 
 
- <Box sx={{ display: 'flex',justifyContent: 'center',p: 1, m: 1,mt:1,bgcolor: 'background.paper',borderRadius: 1, }}>
-         <div className="form-group focused" style={{marginRight:10}}>
 
 
-         <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }}  onClick={handleClickCloseDeleteUser} >
-            Cancel
-          </button>
-                 
+
+
+
+
+
+
+
+        <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          p: 1,
+          m: 1,
+          mt:1,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+        }}
+      >
+
+<div className="form-group focused" style={{marginRight:10}}>
+
+<button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteOrder())}>
+            Delete
+          </button>                  
                  </div>
-                 <div className="form-group focused" style={{marginRight:10}}>
 
-                 <button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'red', }}   onClick={()=>dispatch(DeleteStaff())} >
-                 Delete
-               </button>
-                             
-      </div>
+
+
+
+<div className="form-group focused" style={{marginRight:10}}>
+<button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeleteOrder}>
+            Delete
+          </button>  
+                  
+                 </div>
+
+              
+
+       
  
- </Box> 
+    </Box>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+   
+       
       </Dialog>
     </div>
 
@@ -730,7 +852,7 @@ const handleClickCloseDeleteUser = () => {
     </div>
   );
 }
-export default Users;
+export default Orders;
 
 
 

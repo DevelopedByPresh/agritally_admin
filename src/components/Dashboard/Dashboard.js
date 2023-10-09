@@ -402,34 +402,48 @@ function Dashboard() {
            >
           <i className="fas fa-chart-pie fa-fw me-3"></i><span>Daily Statistics</span>
         </a>
-        <a
-           href="#"
-           className="list-group-item list-group-item-action py-2 ripple"
-           ><i className="fas fa-chart-bar fa-fw me-3"></i><span>Orders</span></a
-          >
+  
           <a
            href="#"
            className="list-group-item list-group-item-action py-2 ripple"
            ><i className="fas fa-lock fa-fw me-3"></i><span>Medication</span></a
           >
     
-      
-        <a
-           href="#"
-           className="list-group-item list-group-item-action py-2 ripple"
-           ><i className="fas fa-users fa-fw me-3"></i><span>My Team</span></a
-          >
-
-
-          <li
-         
-           className="list-group-item list-group-item-action py-2 ripple"
-           ><i className="fas fa-users fa-fw me-3"></i>
-           <Link to="/Dashboard/Users" >
-           
-           <span style={{color:'black'}}>Users</span> 
+          <li className="list-group-item list-group-item-action py-2 ripple"><i className="fas fa-users fa-fw me-3"></i>
+           <Link to="/Dashboard/Admins" >
+           <span style={{color:'black'}}>My Team</span> 
            </Link>
            </li>
+      
+      
+
+
+
+
+          <li className="list-group-item list-group-item-action py-2 ripple"><i className="fas fa-users fa-fw me-3"></i>
+           <Link to="/Dashboard/Users" >
+           <span style={{color:'black'}}>All Staff</span> 
+           </Link>
+           </li>
+
+       
+
+
+          <li className="list-group-item list-group-item-action py-2 ripple"><i className="fas fa-users fa-fw me-3"></i>
+          <Link to="/Dashboard/Orders">
+           <span style={{color:'black'}}>All Orders</span> 
+           </Link>
+           </li>
+           
+
+          <li className="list-group-item list-group-item-action py-2 ripple"><i className="fas fa-users fa-fw me-3"></i>
+           <Link to="/Dashboard/Carts" >
+           <span style={{color:'black'}}>All Carts</span> 
+           </Link>
+           </li>
+
+
+           
   
    
       </div>

@@ -17,6 +17,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 const  Dashboard = lazy(()=> import("./components/Dashboard/Dashboard"))
 const  AdminProfile = lazy(()=> import("./components/AdminProfile/AdminProfile"))
 const  Users = lazy(()=> import("./components/Dashboard/Users"))
+const  Admins = lazy(()=> import("./components/Dashboard/Admins"))
+const  Orders = lazy(()=> import("./components/Dashboard/Orders"))
+const  Carts = lazy(()=> import("./components/Dashboard/Carts"))
 const  AllProductReport = lazy(()=> import("./components/Dashboard/AllProductReport"))
 
 
@@ -31,12 +34,15 @@ function App() {
 <div className="App">
         <Router>
 
-          <Suspense fallback={<h2 style={{textAlign:'center', marginTop:'30px', fontStyle:'italic', fontWeight:'bold', fontSize:'18px'}}>Please wait...</h2>}>
+          <Suspense fallback={<h2 style={{textAlign:'center', marginTop:'40px', fontStyle:'italic', fontWeight:'bold', fontSize:'18px'}}>Working on it....</h2>}>
           <Routes>
             <Route element={<PrivateRoute />}>
                 <Route element={<Dashboard/>} path="/Dashboard" exact/>
                 <Route element={<AdminProfile/>} path="/AdminProfile"/>
                 <Route element={<Users/>} path="/Dashboard/Users"/>
+                <Route element={<Admins/>} path="/Dashboard/Admins"/>
+                <Route element={<Orders/>} path="/Dashboard/Orders"/>
+                <Route element={<Carts/>} path="/Dashboard/Carts"/>
                 <Route element={<AllProductReport/>} path="/Dashboard/AllProductReport"/>
             </Route>
             <Route element={<Login/>} path="/"/>

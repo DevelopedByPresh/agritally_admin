@@ -45,17 +45,12 @@ import {
     GetPigProduct,
     GetPoultryProduct, 
     ClearError, 
-    DeletePoultryProduct,
-     UpdatePoultryProduct, 
-     UpdatePigProduct,
-     DeletePigProduct,
      ClearMessage,
      GetEggProduct,
-     DeleteEggProduct,
-     UpdateEggProduct,
      GetCatFishProduct,
-     DeleteCatFishProduct,
-     UpdateCatFishProduct
+     UpdateProduct,
+     DeleteProduct
+   
     
     } 
 from "../../Actions/Actions"
@@ -148,9 +143,10 @@ const UserInfo = JSON.parse(sessionStorage.getItem('Admin'))
     quantity:'',
     weight:'',
     status:"",
+    price:""
   })
 
-  const { quantity, weight, status} = products
+  const { quantity, weight, status, price} = products
 
 
 
@@ -198,8 +194,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
   const handleUpdatePoultry = (e)=>{
     e.preventDefault()
-    const product = { quantity, status}
-     dispatch(UpdatePoultryProduct(product))
+    const product = { quantity, status, price}
+     dispatch(UpdateProduct(product))
 
 
    
@@ -208,8 +204,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
   const handleUpdatePig = (e)=>{
     e.preventDefault()
-    const product = { quantity, weight, status}
-    dispatch(UpdatePigProduct(product))
+    const product = { quantity, weight, status, price}
+    dispatch(UpdateProduct(product))
 
    
 
@@ -218,8 +214,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
   const handleUpdateEgg = (e)=>{
     e.preventDefault()
-    const product = { quantity, status}
-    dispatch(UpdateEggProduct(product))
+    const product = { quantity, status, price}
+    dispatch(UpdateProduct(product))
 
    
 
@@ -228,8 +224,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   
   const handleUpdateCatFish = (e)=>{
     e.preventDefault()
-    const product = { quantity, weight, status}
-    dispatch(UpdateCatFishProduct(product))
+    const product = { quantity, weight, status, price}
+    dispatch(UpdateProduct(product))
 
    
 
@@ -361,19 +357,19 @@ const FeedReport = ()=>{
     const handleClickOpenEdit = (report) => {
       setOpenEdit(true);
   
-      sessionStorage.setItem('PoultryUpdateId', report?.id)
+      sessionStorage.setItem('ProductUpdateId', report?.id)
       setProducts(report);
   };
 
   const handleCloseEdit = () => {
     setOpenEdit(false);
-    sessionStorage.removeItem('PoultryUpdateId')
+    sessionStorage.removeItem('ProductUpdateId')
   };
 
 
   const handleClickOpenEditPig = (report) => {
     setOpenEditPig(true);
-    sessionStorage.setItem('PigUpdateId', report?.id)
+    sessionStorage.setItem('ProductUpdateId', report?.id)
     setProducts(report);
 
 };
@@ -387,7 +383,7 @@ const handleCloseEditPig = () => {
 
 const handleClickOpenEditEgg = (report) => {
     setOpenEditEgg(true);
-    sessionStorage.setItem('EggUpdateId', report?.id)
+    sessionStorage.setItem('ProductUpdateId', report?.id)
     setProducts(report);
    
 };
@@ -399,7 +395,7 @@ const handleCloseEditEgg = () => {
 
 const handleClickOpenEditCatFish = (report) => {
     setOpenEditCatFish(true);
-    sessionStorage.setItem('CatFishUpdateId', report?.id)
+    sessionStorage.setItem('ProductUpdateId', report?.id)
     setProducts(report);
 
 };
@@ -414,7 +410,7 @@ const handleCloseEditCatFish = () => {
 
   const handleClickOpenDeletePoultry = (id) => {
     setOpenDeletePoultry(true);
-    sessionStorage.setItem('PoultryId', id)
+    sessionStorage.setItem('ProductDeleteID', id)
  
 };
 
@@ -426,7 +422,7 @@ const handleClickCloseDeletePoultry = () => {
 
 const handleClickOpenDeletePig = (id) => {
     setOpenDeletePig(true);
-    sessionStorage.setItem('PigId', id)
+    sessionStorage.setItem('ProductDeleteID', id)
 
 };
 
@@ -441,7 +437,7 @@ const handleClickCloseDeletePig = () => {
 
 const handleClickOpenDeleteEgg = (id) => {
     setOpenDeleteEgg(true);
-    sessionStorage.setItem('EggId', id)
+    sessionStorage.setItem('ProductDeleteID', id)
 
 };
 
@@ -454,7 +450,7 @@ const handleClickCloseDeleteEgg = () => {
 
 const handleClickOpenDeleteCatFish = (id) => {
     setOpenDeleteCatFish(true);
-    sessionStorage.setItem('CatFishId', id)
+    sessionStorage.setItem('ProductDeleteID', id)
 
 };
 
@@ -572,6 +568,16 @@ setTimeout(()=>{
      }
     },
 
+
+    {
+      name: "Price",
+      label: "Price",
+      options: {
+       filter: true,
+       sort: true,
+      }
+     },
+
     {
         name: "Status",
         label: "Status",
@@ -667,6 +673,15 @@ const PigColumns = [
        },
 
        {
+        name: "Price",
+        label: "Price",
+        options: {
+         filter: true,
+         sort: true,
+        }
+       },
+
+       {
         name: "Status",
         label: "Status",
         options: {
@@ -750,6 +765,15 @@ const PigColumns = [
       sort: true,
      }
     },
+
+    {
+      name: "Price",
+      label: "Price",
+      options: {
+       filter: true,
+       sort: true,
+      }
+     },
 
 
     {
@@ -843,6 +867,15 @@ const PigColumns = [
         }
        },
 
+       {
+        name: "Price",
+        label: "Price",
+        options: {
+         filter: true,
+         sort: true,
+        }
+       },
+
  
        {
         name: "Status",
@@ -926,6 +959,7 @@ const PigColumns = [
         Quantity: report?.quantity,
         'Created By': report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
+        Price: '₦' + report?.price,
         Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
        
       
@@ -956,6 +990,7 @@ const PigColumns = [
         "Weight ": report?.weight + 'kg',
         'Created By':  report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
+        Price: '₦' + report?.price,
         Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
        
        
@@ -989,6 +1024,7 @@ const PigColumns = [
         Quantity: report?.quantity,
         'Created By':  report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
+        Price: '₦' + report?.price,
         Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
        
        
@@ -1022,6 +1058,7 @@ const PigColumns = [
         "Weight ": report?.weight + 'kg',
         'Created By':  report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
+        Price: '₦' + report?.price,
         Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
        
     
@@ -1150,7 +1187,7 @@ const PigColumns = [
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open Profile">
+            {/* <Tooltip title="Open Profile"> */}
               {/* <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="https://demos.creative-tim.com/argon-dashboard/assets-old/img/theme/team-4.jpg" />
               </IconButton> */}
@@ -1160,7 +1197,7 @@ const PigColumns = [
                 <Avatar alt={UserInfo?.lastName} src="https://demos.creative-tim.com/argon-dashboard/assets-old/img/theme/team-4.jpg" />
               </IconButton>
               </Link>
-            </Tooltip>
+            {/* </Tooltip> */}
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -1350,7 +1387,7 @@ const PigColumns = [
    
 
  
-{report === 'pig' ?
+{report === 'pig' && pig?.length > 0 ?
 
     <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
@@ -1363,12 +1400,16 @@ const PigColumns = [
 />
 
 
-</div>: ""}
+</div> : "" }
+
+{/* <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+No Report on Pigs yet! 
+   </Typography> } */}
 
 
 
 
-{report === 'poultry'  ?
+{report === 'poultry' && poultry?.length > 0  ?
 
     <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
@@ -1383,7 +1424,13 @@ const PigColumns = [
 />
 
 
-</div>:  ""}<br/>
+</div>  : ""}
+
+{/* <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+No Report on Poultry yet! 
+   </Typography>} */}
+
+<br/>
 
 
 
@@ -1392,7 +1439,7 @@ const PigColumns = [
 
 
 
-{report === 'egg'  ?
+{report === 'egg' && egg?.length > 0  ?
 
     <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
@@ -1406,12 +1453,11 @@ const PigColumns = [
 />
 
 
-</div>:  ""}
+</div>  :  ""}
 
 
 
-
-{report === 'catFish'  ?
+{report === 'catFish' && catFish?.length > 0  ?
 
     <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
@@ -1425,7 +1471,7 @@ const PigColumns = [
 />
 
 
-</div>:  ""}
+</div>  :  ""}
 
 
 
@@ -1444,6 +1490,39 @@ const PigColumns = [
 
 
 
+{report === 'poultry' && poultry?.length === 0 ?
+ <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+No Report on Poultry yet! 
+   </Typography>
+ 
+
+: ""}
+
+
+{ report === 'catFish' && catFish?.length ===0 ?
+ <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+No Report on Cat Fish yet! 
+   </Typography>
+ 
+
+: ""}
+
+
+{ report === 'egg' && egg?.length ===0 ?
+ <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+No Report on Eggs yet! 
+   </Typography>
+ 
+
+: ""}
+
+{ report === 'pig' && pig?.length ===0 ?
+ <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+No Report on Pigs yet! 
+   </Typography>
+ 
+
+: ""}
 
 
 
@@ -1522,7 +1601,7 @@ Edit Modal */}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
-        maxWidth="md"
+        maxWidth="lg"
 
       >
         <DialogTitle id="alert-dialog-title">
@@ -1551,7 +1630,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -1561,7 +1640,7 @@ Edit Modal */}
 }
 
 {error &&
-<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
@@ -1637,10 +1716,27 @@ Edit Modal */}
 <TextField
           label="Quantity"
           id="outlined-start-adornment"
-          sx={{ width: 400 }}
+          sx={{ width: 300 }}
           onChange={handleChange}
           name='quantity'
           value={quantity}
+          onFocus={handleFocus}
+        
+        /> 
+        </Box>
+
+
+
+
+
+        <Box >
+<TextField
+          label="Price(₦)"
+          id="outlined-start-adornment"
+          sx={{ width: 300,ml:3 }}
+          onChange={handleChange}
+          name='price'
+          value={price}
           onFocus={handleFocus}
         
         /> 
@@ -1731,7 +1827,7 @@ Edit Modal */}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
-        maxWidth="lg"
+        maxWidth="md"
 
       >
         <DialogTitle id="alert-dialog-title">
@@ -1755,7 +1851,7 @@ Edit Modal */}
        
           p: 1,
           m: 1,
-          mt:5,
+          mt:4,
           bgcolor: 'background.paper',
           borderRadius: 1,
         }}
@@ -1764,7 +1860,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -1774,7 +1870,7 @@ Edit Modal */}
 }
 
 {error &&
-<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
@@ -1879,7 +1975,39 @@ Edit Modal */}
 
 
 
-<FormControl sx={{  width: 320, ml:7, alignItems:'center' }}>
+
+</Box>
+
+
+
+
+
+
+
+ 
+    </Box><br/>
+
+
+    <Box sx={{display:'flex', justifyContent: 'center'}}>
+
+
+    <Box sx={{ marginRight:5}}>
+
+<TextField
+          label="Price(₦)"
+          id="outlined-start-adornment"
+          sx={{ width: 400, }}
+          onChange={handleChange}
+          name='price'
+          value={price}
+          onFocus={handleFocus}
+        
+        /> 
+        </Box>
+
+
+
+    <FormControl sx={{  width: 320, alignItems:'center' }}>
                 <InputLabel id="demo-multiple-name-label">Change Status...</InputLabel>
                 <Select
                   sx={{ width: 330, height: 55 }}
@@ -1901,21 +2029,15 @@ Edit Modal */}
                 </Select>
               </FormControl>
 
-</Box>
+
+        </Box>
 
 
 
 
-
-
-
- 
-    </Box><br/>
-
-
-
-
-    </form><br/>
+    </form>
+    <br/>
+    <br/>
 
  
 
@@ -1956,7 +2078,7 @@ Edit Modal */}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
-        maxWidth="md"
+        maxWidth="lg"
 
       >
         <DialogTitle id="alert-dialog-title">
@@ -1989,7 +2111,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -1999,7 +2121,7 @@ Edit Modal */}
 }
 
 {error &&
-<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
@@ -2018,15 +2140,64 @@ Edit Modal */}
           <br/> 
 
 
-   
-          
-     <Box sx={{display:'flex', justifyContent: 'center'}}>
+        
+        {/* <Box sx={{ml:-30}}>
 
-<Box sx={{ marginRight:5}}>
+              <FormControl sx={{  width: 150 }}>
+                <InputLabel id="demo-multiple-name-label">Select Product...</InputLabel>
+                <Select
+                  sx={{ width: 330, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                  value={selectedProduct}
+                  fullWidth
+                  onFocus={handleFocus}
+                  input={<OutlinedInput label="Select State..." />}
+                  onChange={(e) => setSelectedProduct(e.target.value)}
+                >
+                  {ProductData.product.map((value, key) => (
+                    <MenuItem key={key} value={value.name}> 
+                      
+                      {value.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              </Box> */}
+          
+
+
+           
+              {/* <FormControl sx={{ width: 150 }}>
+                <InputLabel id="demo-multiple-name-label">Select Category...</InputLabel>
+                <Select
+                  sx={{ width: 330, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  
+                  id="demo-multiple-name"
+                  value={selectedCategory}
+                  onFocus={handleFocus}
+                  input={<OutlinedInput label="Select Local Government..." />}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  {availableProduct?.category.map((e, key) => (
+                    <MenuItem key={key} value={e}>
+                      {e}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl> 
+               */}
+          
+     
+
+          <Box sx={{display:'flex', justifyContent: 'center'}}>
+
+          <Box >
 <TextField
           label="Quantity"
           id="outlined-start-adornment"
-          sx={{ width: 400 }}
+          sx={{ width: 300 }}
           onChange={handleChange}
           name='quantity'
           value={quantity}
@@ -2039,8 +2210,25 @@ Edit Modal */}
 
 
 
+        <Box >
+<TextField
+          label="Price(₦)"
+          id="outlined-start-adornment"
+          sx={{ width: 300,ml:3 }}
+          onChange={handleChange}
+          name='price'
+          value={price}
+          onFocus={handleFocus}
+        
+        /> 
+        </Box>
 
-        <FormControl sx={{  width: 320, ml:7, alignItems:'center' }}>
+
+
+
+        
+
+<FormControl sx={{  width: 320, ml:7, alignItems:'center' }}>
                 <InputLabel id="demo-multiple-name-label">Change Status...</InputLabel>
                 <Select
                   sx={{ width: 330, height: 55 }}
@@ -2064,22 +2252,18 @@ Edit Modal */}
 
 
 
-</Box>
-
-
-
 
 
 
 
  
     </Box><br/>
+    </Box><br/>
 
 
 
 
     </form><br/>
-
  
 
    
@@ -2118,7 +2302,7 @@ Edit Modal */}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
-        maxWidth="lg"
+        maxWidth="md"
 
       >
         <DialogTitle id="alert-dialog-title">
@@ -2142,7 +2326,7 @@ Edit Modal */}
        
           p: 1,
           m: 1,
-          mt:5,
+          mt:4,
           bgcolor: 'background.paper',
           borderRadius: 1,
         }}
@@ -2151,7 +2335,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -2161,7 +2345,7 @@ Edit Modal */}
 }
 
 {error &&
-<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
@@ -2181,7 +2365,53 @@ Edit Modal */}
 
 
         
-      
+        {/* <Box sx={{ml:-30}}>
+
+              <FormControl sx={{  width: 150 }}>
+                <InputLabel id="demo-multiple-name-label">Select Product...</InputLabel>
+                <Select
+                  sx={{ width: 330, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                  value={selectedProduct}
+                  fullWidth
+                  onFocus={handleFocus}
+                  input={<OutlinedInput label="Select State..." />}
+                  onChange={(e) => setSelectedProduct(e.target.value)}
+                >
+                  {ProductData.product.map((value, key) => (
+                    <MenuItem key={key} value={value.name}> 
+                      
+                      {value.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              </Box> */}
+          
+
+
+           
+              {/* <FormControl sx={{ width: 150 }}>
+                <InputLabel id="demo-multiple-name-label">Select Category...</InputLabel>
+                <Select
+                  sx={{ width: 330, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  
+                  id="demo-multiple-name"
+                  value={selectedCategory}
+                  onFocus={handleFocus}
+                  input={<OutlinedInput label="Select Local Government..." />}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  {availableProduct?.category.map((e, key) => (
+                    <MenuItem key={key} value={e}>
+                      {e}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl> 
+               */}
           
      <Box sx={{display:'flex', justifyContent: 'center'}}>
 
@@ -2218,8 +2448,41 @@ Edit Modal */}
 </Box>
 
 
-  
-<FormControl sx={{  width: 320, ml:7, alignItems:'center' }}>
+
+
+
+</Box>
+
+
+
+
+
+
+
+ 
+    </Box><br/>
+
+
+    <Box sx={{display:'flex', justifyContent: 'center'}}>
+
+
+    <Box sx={{ marginRight:5}}>
+
+<TextField
+          label="Price(₦)"
+          id="outlined-start-adornment"
+          sx={{ width: 400, }}
+          onChange={handleChange}
+          name='price'
+          value={price}
+          onFocus={handleFocus}
+        
+        /> 
+        </Box>
+
+
+
+    <FormControl sx={{  width: 320, alignItems:'center' }}>
                 <InputLabel id="demo-multiple-name-label">Change Status...</InputLabel>
                 <Select
                   sx={{ width: 330, height: 55 }}
@@ -2241,22 +2504,15 @@ Edit Modal */}
                 </Select>
               </FormControl>
 
-</Box>
+
+        </Box>
 
 
 
 
-
-
-
- 
-    </Box><br/>
-
-
-
-
-    </form><br/>
-
+    </form>
+    <br/>
+    <br/>
  
 
    
@@ -2318,8 +2574,8 @@ Edit Modal */}
       >
      
 
-        <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Delete this Product Report?"}
+        <DialogTitle id="alert-dialog-title" style={{textAlign:'center', fontSize:'20px', whiteSpace:'no-wrap'}}>
+          {"Are You Sure You Want To Permanently Delete this Product?"}
         </DialogTitle>
         <br/>
         {message && 
@@ -2368,14 +2624,17 @@ Edit Modal */}
 
 
 <div className="form-group focused" style={{marginRight:10}}>
+                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteProduct())}> Delete </a>
+                  
+                 </div>
+
+
+<div className="form-group focused" style={{marginRight:10}}>
                   <a href="#!" className="btn btn-success"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeletePoultry}>Cancel </a>
                   
                  </div>
 
-                 <div className="form-group focused" style={{marginRight:10}}>
-                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeletePoultryProduct())}> Delete </a>
-                  
-                 </div>
+             
 
        
  
@@ -2421,9 +2680,8 @@ Edit Modal */}
 
       >
      
-
-        <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Delete this Product Report?"}
+     <DialogTitle id="alert-dialog-title" style={{textAlign:'center', fontSize:'20px', whiteSpace:'no-wrap'}}>
+          {"Are You Sure You Want To Permanently Delete this Product?"}
         </DialogTitle>
         <br/>
         {message && 
@@ -2473,14 +2731,17 @@ Edit Modal */}
 
 
 <div className="form-group focused" style={{marginRight:10}}>
+                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteProduct())}> Delete </a>
+                  
+                 </div>
+
+
+<div className="form-group focused" style={{marginRight:10}}>
                   <a href="#!" className="btn btn-success"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeletePig}>Cancel </a>
                   
                  </div>
 
-                 <div className="form-group focused" style={{marginRight:10}}>
-                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeletePigProduct())}> Delete </a>
-                  
-                 </div>
+          
 
        
  
@@ -2523,8 +2784,8 @@ Edit Modal */}
       >
      
 
-        <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Delete this Product Report?"}
+     <DialogTitle id="alert-dialog-title" style={{textAlign:'center', fontSize:'20px', whiteSpace:'no-wrap'}}>
+          {"Are You Sure You Want To Permanently Delete this Product?"}
         </DialogTitle>
         <br/>
         {message && 
@@ -2572,16 +2833,18 @@ Edit Modal */}
         }}
       >
 
+<div className="form-group focused" style={{marginRight:10}}>
+                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteProduct())}> Delete </a>
+                  
+                 </div>
+
 
 <div className="form-group focused" style={{marginRight:10}}>
                   <a href="#!" className="btn btn-success"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeleteEgg}>Cancel </a>
                   
                  </div>
 
-                 <div className="form-group focused" style={{marginRight:10}}>
-                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteEggProduct())}> Delete </a>
-                  
-                 </div>
+             
 
        
  
@@ -2624,8 +2887,8 @@ Edit Modal */}
       >
      
 
-        <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Delete this  Cat Fish Product Report?"}
+     <DialogTitle id="alert-dialog-title" style={{textAlign:'center', fontSize:'20px', whiteSpace:'no-wrap'}}>
+          {"Are You Sure You Want To Permanently Delete this Product?"}
         </DialogTitle>
         <br/>
         {message && 
@@ -2675,14 +2938,17 @@ Edit Modal */}
 
 
 <div className="form-group focused" style={{marginRight:10}}>
+                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteProduct())}> Delete </a>
+                  
+                 </div>
+
+
+<div className="form-group focused" style={{marginRight:10}}>
                   <a href="#!" className="btn btn-success"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeleteCatFish}>Cancel </a>
                   
                  </div>
 
-                 <div className="form-group focused" style={{marginRight:10}}>
-                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteCatFishProduct())}> Delete </a>
-                  
-                 </div>
+             
 
        
  

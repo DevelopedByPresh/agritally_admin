@@ -300,18 +300,19 @@ const handleCloseUserMenu = () => {
 } */}
 
 {errors &&
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="containerss"  style={{textAlign:'center',  margin:'0px auto', whiteSpace:'no-wrap'}}>
 
-<div className="alert alert-danger danger alert-dismissible" role="alert">
-<div className="container">
-
-<strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {errors}, Please Try again!
+<strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {errors}!
 
 
 
 
 </div>
-</div> 
-}
+</div>  
+ }
+
+ <br/>
 
 
 

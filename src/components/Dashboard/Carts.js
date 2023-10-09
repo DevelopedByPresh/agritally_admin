@@ -21,38 +21,39 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {Link} from 'react-router-dom'
-import EditIcon from '@mui/icons-material/Edit';
+
 import DeleteIcon from '@mui/icons-material/Delete';
-import FormControl, { useFormControl } from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
+
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from "../../Actions/Actions"
+import { ClearError,  ClearMessage,GetAllCart, DeleteCart, } from "../../Actions/Actions"
 
 
 
 
 
 
- const Users=()=> {
-
+ const Carts=()=> {
+    const dispatch = useDispatch()
 
   useEffect(()=>{
     document.body.style.zoom = "70%";
+    dispatch(GetAllCart())
+    
   
   },[])
 
   const UserInfo = JSON.parse(sessionStorage.getItem('Admin'))
 
   
-  const dispatch = useDispatch()
+
       
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
   const loading = useSelector((state)=>state?.Admin?.loading)
-  const staff = useSelector((state)=>state?.Admin?.staff)
+  const Carts = useSelector((state)=>state?.Admin?.cart)
+ 
 
 
   
@@ -61,64 +62,34 @@ const pages = ['About Us', 'Contact Us'];
 const settings = [ 'Logout', 'Reset Password','Profile', 'Dashboard',];
 const [open, setOpen] = useState(false);
 
-  
+const [tableBodyHeight, setTableBodyHeight] = useState("400px");
+const [tableBodyHeight2, setTableBodyHeight2] = useState("200px");
+
+const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
+const [searchBtn, setSearchBtn] = useState(true);
+const [downloadBtn, setDownloadBtn] = useState(true);
+const [printBtn, setPrintBtn] = useState(true);
+const [viewColumnBtn, setViewColumnBtn] = useState(true);
+const [filterBtn, setFilterBtn] = useState(true);
 const [anchorElNav, setAnchorElNav] = useState(null);
 const [anchorElUser, setAnchorElUser] = useState(null);
 
-const [openEdit, setOpenEdit] = useState(false);
-const [openDeleteUser, setOpenDeleteUser] = useState(false);
 
-const [user, setUser] = useState({
-  role:''
-})
-
-const {role} = user
+const [openDeleteCart, setOpenDeleteCart] = useState(false);
+const [singleCart, setSingleCart] = useState([])
 
 
-const handleChange = (e)=>{
-  const {name, value} = e.target
-  setUser({...user, [name]:value})
+const handleFocus = ()=>{
+    if(error){
+        dispatch(ClearError())
+    }
 }
 
-const UpdateSingleStaff =(e)=>{
-  e.preventDefault()
-  const user = {role}
+
+
+  const handleClickOpen = (cartItems) => {
   
-  dispatch(UpdateStaff(user))
- 
-}
-
-
-
-
-
-
-
-
-const Role= [
-  { label: 'staff' },
-  { label: 'owner'  },
-  { label: 'manager' },
-  { label: 'admin' },
-  { label: 'superAdmin' },
-
-];
-
-
-
-useEffect(()=>{
-  dispatch(GetAllStaff())
-},[])
-
-
-
-
-
-
-
-
-
-  const handleClickOpen = () => {
+    setSingleCart(cartItems)
     setOpen(true);
   };
 
@@ -126,28 +97,16 @@ useEffect(()=>{
     setOpen(false);
   };
 
-    const handleClickOpenEdit = (user) => {
-      setOpenEdit(true);
-      sessionStorage.setItem('UserUpdateId', user?._id)
-     setUser({...user});
-    
-  };
-
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-    dispatch(ClearError())
-  };
 
 
 
-  const handleClickOpenDeleteUser = (id) => {
-    setOpenDeleteUser(true);
-    sessionStorage.setItem('userId', id)
-  
+  const handleClickOpenDeleteCart = (id) => {
+    setOpenDeleteCart(true);
+    sessionStorage.setItem('CartId', id)
 };
 
-const handleClickCloseDeleteUser = () => {
-  setOpenDeleteUser(false);
+const handleClickCloseDeleteCart = () => {
+  setOpenDeleteCart(false);
   dispatch(ClearError())
 };
 
@@ -190,8 +149,8 @@ const handleClickCloseDeleteUser = () => {
     if(message){
 
       dispatch(ClearMessage())
-      setOpenDeleteUser(false);
-      setOpenEdit(false);
+      setOpenDeleteCart(false);
+
      
     }
   
@@ -202,34 +161,73 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-  const columns = [
+  const columns2 = [
+
     {
-     name: "First Name",
-     label: "First Name",
+     name: "Quantity",
+     label: "Quantity",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+    {
+     name: " Unit Price",
+     label: " Unit Price",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+  
+
+
+     {
+      name: "Total Amount",
+      label: "Total Amount",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+
+
+   
+
+
+
+
+    
+   ];
+
+   const columns = [
+    {
+     name: "Date Created",
+     label: "Date Created",
      options: {
       filter: true,
       sort: true,
      }
     },
     {
-     name: "Last Name",
-     label: "Last Name",
+     name: "Created By",
+     label: "Created By",
      options: {
       filter: true,
       sort: false,
      }
     },
     {
-     name: "Date Of Birth",
-     label: "Date Of Birth",
+     name: "Number of Cart",
+     label: "Number of Cart",
      options: {
       filter: true,
       sort: false,
      }
     },
     {
-      name: "Email Address",
-      label: "Email Address",
+      name: "Status",
+      label: "Status",
       options: {
        filter: true,
        sort: false,
@@ -237,44 +235,39 @@ const handleClickCloseDeleteUser = () => {
      },
 
      
+ 
+
      {
-      name: "Phone Number",
-      label: "Phone Number",
+      name: "Total Amount",
+      label: "Total Amount",
       options: {
        filter: true,
        sort: false,
       }
      },
 
-     {
-      name: "Staff Role",
-      label: "Staff Role",
-      options: {
-       filter: true,
-       sort: false,
-      }
-     },
 
-  
    
-
-     {
-      name: "Edit",
-      label: "Edit",
+    {
+      name: "Details",
+      label: "Details",
       options: {
        filter: true,
        sort: false,
       }
      },
 
-     {
-      name: "Delete",
-      label: "Delete",
-      options: {
-       filter: true,
-       sort: false,
-      }
-     },
+
+
+       {
+        name: "Delete",
+        label: "Delete",
+        options: {
+         filter: true,
+         sort: false,
+        }
+       },
+
 
 
     
@@ -282,42 +275,96 @@ const handleClickCloseDeleteUser = () => {
 
 
 
+   const data2 =
+   singleCart &&
+   singleCart?.map((cart) => {
+ 
 
-   const data =
-   staff &&
-   staff?.map((user) => {
+ 
 
      return {
-        "First Name": user?.firstName,
-        "Last Name": user?.lastName,
-        'Date Of Birth':user?.date_of_birth,
-        'Email Address': user?.email,
-        'Phone Number':user?.phone,
-        'Staff Role':user?.role,
-        Edit:   (
-          <EditIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpenEdit(user))}`} />
-        ),
-
-        Delete:   (
-          <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteUser(user?._id))}`}  />
-        ),
-
   
-     };
-   });
-
-
-
-
-
-
-
-
+        'Quantity': cart?.quantity,
+        ' Unit Price': '₦' + cart?.price,
+    
+        "Total Amount": '₦' + cart?.subtotal,
+     
 
    
-   const options = {
-     filterType: 'checkbox',
-   };
+
+     };
+   });
+ 
+
+
+   const data =
+   Carts &&
+   Carts?.map((cart) => {
+    var date = cart?.createdAt,
+    newDate = (new Date(date))?.toString();
+
+    const noCart = cart?.cartItems?.length
+ 
+
+     return {
+        "Date Created":  newDate,
+        'Created By': cart?.user?.firstName + " " + cart?.user?.lastName,
+        'Number of Cart': noCart,
+        Status: cart?.active?.toLocaleString(),
+        "Total Amount":'₦' + cart?.total,
+     
+
+          Details:   (
+            <VisibilityIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpen(cart?.cartItems))}`} />
+          ),
+     
+
+          Delete:   (
+            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteCart(cart?._id))}`}  />
+          ),
+  
+
+     };
+   });
+ 
+
+
+
+
+
+
+
+
+
+    
+  const options = {
+    filterType: 'checkbox',
+
+    search: searchBtn,
+    download: downloadBtn,
+    print: printBtn,
+    viewColumns: viewColumnBtn,
+    filter: filterBtn,
+    filterType: "dropdown",
+  
+    tableBodyHeight,
+    tableBodyMaxHeight,
+  };
+
+
+  const options2 = {
+    filterType: 'checkbox',
+
+    search: searchBtn,
+    download: downloadBtn,
+    print: printBtn,
+    viewColumns: viewColumnBtn,
+    filter: filterBtn,
+    filterType: "dropdown",
+  
+    tableBodyHeight2,
+    tableBodyMaxHeight,
+  };
 
 
 
@@ -332,11 +379,11 @@ const handleClickCloseDeleteUser = () => {
 <AppBar position="static" sx={{  backgroundColor: '#012949' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-        <Link to="/Dashboard" style={{color:'white'}}>
+     <Link to="/Dashboard" style={{color:'white'}}>
           <Typography
             variant="h6"
             noWrap
-           // component="a"
+          //  component="a"
       
             sx={{
               mr: 2,
@@ -464,13 +511,10 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-
-
-
-    {staff?.length > 0 ?
+    {Carts?.length > 0 ?
 
 <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15,} }>
-   All Existing Staff   
+All Carts Created By Every Staff
 </Typography>: ""}
 
 <br/>
@@ -479,31 +523,35 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-   
 
-{staff?.length > 0 ?
+
+   {Carts?.length >0 ?
+
+
 
 
 <div style={{width:1800, marginLeft:80}}>
 <MUIDataTable
-  title={ `Number of Staff : ${data?.length}`}
+  title={ `Number of Cart : ${data?.length}`}
   data={data}
   columns={columns}
   options={options}
+ 
+
 />
 
-</div> :
+
+</div> :  
 
 <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
-     No Existing Staff At the Moment! 
+     No Cart created By Staff yet! 
    </Typography>}
 
 
 
 
 
-
-    <div>
+<div>
    
       <Dialog
         open={open}
@@ -513,31 +561,24 @@ const handleClickCloseDeleteUser = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {" Order Entry Details"}
-        </DialogTitle>
-      
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-        Customer Name : Precious Mike
-          </DialogContentText>
-          <br/>
+        <DialogContent><br/>
+          
+    <div style={{width:800, margin:"0 auto", alignItems:'center', textAlign:'center'}}>
+<MUIDataTable
+  title={ `Number of Cart Created : ${singleCart?.length}`}
+  data={data2}
+  columns={columns2}
+  options={options2}
+ 
 
-          <DialogContentText id="alert-dialog-description">
-          Date Of Entry : 03 - 2 -2023
-          </DialogContentText>
-          <br/>
+/>
 
 
-          <DialogContentText id="alert-dialog-description">
-        Order Amount : $234.78
-          </DialogContentText>
-          <br/>
+</div>
+    
 
 
-          <DialogContentText id="alert-dialog-description">
-        Total Quantity&nbsp;(g) : 34.98
-          </DialogContentText>
+       
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
@@ -552,104 +593,6 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-{/* Edit Modal */}
-
-    
-    <div>
-      
-      <Dialog
-        open={openEdit}
-        onClose={handleCloseEdit}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        fullWidth
-        maxWidth="sm"
-
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Change Staff's Role"}
-        </DialogTitle>
-
-        <form>
-        <Box
-        sx={{
-          p: 1,
-          m: 1,
-          mt:5,
-          bgcolor: 'background.paper',
-          borderRadius: 1,
-        }}
-      >
-
-
-{message && 
-
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'60%', margin:'0px auto'}}>
-<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
-
-<strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
-
-</div>
-</div>
-}
-
-{error &&
-<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
-<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
-<strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
-</div>
-</div>  
- }
-
-
-{loading && error === false ?
-          <div className='loader'></div> : ""}
-          <br/> 
-    
-          
-     
-
-<Box sx={{textAlign:'center',  alignItems:'center'}}>
-<FormControl sx={{  width: 320, alignItems:'center' }}>
-                <InputLabel id="demo-multiple-name-label">Change Role...</InputLabel>
-                <Select
-                  sx={{ width: 330, height: 55 }}
-                  labelId="demo-multiple-name-label"
-                  id="demo-multiple-name"
-                  value={role}
-                  name="role"
-                  fullWidth
-                 // onFocus={handleFocus}
-                  input={<OutlinedInput label="Select State..." />}
-                  onChange={handleChange}
-                >
-                  {Role.map((value, key) => (
-                    <MenuItem key={key} value={value.label}> 
-                      
-                      {value.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-        </Box>
- 
-    </Box><br/>
-
-
-    </form>
-   
-        <DialogActions>
-        <div className="form-group focused" style={{marginRight:10}}>
-         <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }}  onClick={UpdateSingleStaff} >
-            Update
-          </button>
-                 </div>
-        </DialogActions>
-      </Dialog>
-    </div>
-
-{/* End of Edit Modal */}
 
 
 
@@ -661,8 +604,8 @@ const handleClickCloseDeleteUser = () => {
     <div>
       
       <Dialog
-        open={openDeleteUser}
-        onClose={handleClickCloseDeleteUser}
+        open={openDeleteCart}
+        onClose={handleClickCloseDeleteCart}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
@@ -670,14 +613,19 @@ const handleClickCloseDeleteUser = () => {
 
       >
         <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Delete this Staff?"}
+          {"Are You Sure You Want To Permanently delete This Cart?"}
         </DialogTitle>
 
 
+
+
         {message && 
+
 <div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
+
 </div>
 </div>
 }
@@ -685,34 +633,50 @@ const handleClickCloseDeleteUser = () => {
 {error &&
 <div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
+
+
+
+
 </div>
 </div>  
  }
 
+
+
 {loading && error === false ?
           <div className='loader'></div> : ""}
           <br/> 
+        <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          p: 1,
+          m: 1,
+          mt:1,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+        }}
+      >
+
+<div className="form-group focused" style={{marginRight:10}}>
+<button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'red', }}  onClick={()=>dispatch(DeleteCart())} >
+            Delete
+          </button>
+                 </div>
 
 
- <Box sx={{ display: 'flex',justifyContent: 'center',p: 1, m: 1,mt:1,bgcolor: 'background.paper',borderRadius: 1, }}>
-         <div className="form-group focused" style={{marginRight:10}}>
 
 
-         <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }}  onClick={handleClickCloseDeleteUser} >
+<div className="form-group focused" style={{marginRight:10}}>
+<button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeleteCart} >
             Cancel
           </button>
-                 
                  </div>
-                 <div className="form-group focused" style={{marginRight:10}}>
+    </Box>
 
-                 <button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'red', }}   onClick={()=>dispatch(DeleteStaff())} >
-                 Delete
-               </button>
-                             
-      </div>
- 
- </Box> 
+
       </Dialog>
     </div>
 
@@ -723,14 +687,14 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-    <Copyright sx={{ mt: 5 }} />
+    {/* <Copyright sx={{ mt: 5 }} /> */}
 
 
     
     </div>
   );
 }
-export default Users;
+export default Carts;
 
 
 

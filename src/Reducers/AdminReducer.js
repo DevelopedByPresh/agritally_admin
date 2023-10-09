@@ -1,5 +1,5 @@
 import * as TYPES from "../Actions/ActionTypes"
-import { GET_ALL_STAFF } from './../Actions/ActionTypes';
+
 
 
 
@@ -14,7 +14,10 @@ const initialState = {
     eggProduct:[],
     catFishProduct:[],
     staff:[],
-    Admin:[]
+    Admin:[],
+    orders:[],
+    cart:[],
+    Admins:[]
 }
 
 
@@ -190,6 +193,15 @@ const AdminReducer = (state=initialState, action) =>{
                       };
 
 
+                      case TYPES.GET_ALL_ADMINS:
+                        return {
+                          ...state,
+                          error: false,
+                          loading: false,
+                          Admins:action.payload
+                        };
+
+
                       case TYPES.GET_ADMIN:
                         return {
                           ...state,
@@ -215,7 +227,7 @@ const AdminReducer = (state=initialState, action) =>{
 
                       // Delete Products and Staff Start
 
-                       case TYPES.DELETE_POULTRY_PRODUCTS:
+                       case TYPES.DELETE_PRODUCT:
                       return {
                         ...state,
                         error: false,
@@ -224,32 +236,7 @@ const AdminReducer = (state=initialState, action) =>{
                       };
 
 
-                      case TYPES.DELETE_EGG_PRODUCTS:
-                        return {
-                          ...state,
-                          error: false,
-                          loading: false,
-                          message:action.payload
-                        };
-
-                        case TYPES.DELETE_CATFISH_PRODUCTS:
-                          return {
-                            ...state,
-                            error: false,
-                            loading: false,
-                            message:action.payload
-                          };
-  
-
-
-                        case TYPES.DELETE_PIG_PRODUCTS:
-                          return {
-                            ...state,
-                            error: false,
-                            loading: false,
-                            message:action.payload
-                          };
-  
+                     
 
 
                       case TYPES.DELETE_STAFF:
@@ -282,7 +269,7 @@ const AdminReducer = (state=initialState, action) =>{
                       // Update Products And Staff Start
 
 
-                        case TYPES.UPDATE_POULTRY_PRODUCTS:
+                        case TYPES.UPDATE_PRODUCT:
                           return {
                             ...state,
                             error: false,
@@ -291,22 +278,7 @@ const AdminReducer = (state=initialState, action) =>{
                           };
 
 
-                          case TYPES.UPDATE_PIG_PRODUCTS:
-                            return {
-                              ...state,
-                              error: false,
-                              loading: false,
-                              message:action.payload
-                            };
-
-
-                            case TYPES.UPDATE_CATFISH_PRODUCTS:
-                              return {
-                                ...state,
-                                error: false,
-                                loading: false,
-                                message:action.payload
-                              };
+                         
 
                              case TYPES.UPDATE_STAFF:
                             return {
@@ -315,6 +287,17 @@ const AdminReducer = (state=initialState, action) =>{
                               loading: false,
                               message:action.payload
                             };
+
+
+
+                            case TYPES.UPDATE_ADMIN:
+                              return {
+                                ...state,
+                                error: false,
+                                loading: false,
+                                message:action.payload
+                              };
+  
 
                             case TYPES.UPDATE_PROFILE:
                               return {
@@ -326,6 +309,81 @@ const AdminReducer = (state=initialState, action) =>{
 
 
                             // update Product and Staff End
+
+
+
+
+
+                            // EVERYTHING THAT HAS TO DO WITH ORDERS START
+
+                            case TYPES.GET_ALL_ORDERS:
+                              return {
+                                ...state,
+                                error: false,
+                                loading: false,
+                                orders:action.payload
+                              };
+
+
+                                
+                            case TYPES.UPDATE_ORDER:
+                              return {
+                                ...state,
+                                error: false,
+                                loading: false,
+                                message:action.payload
+                              };
+
+
+
+
+                                
+                            case TYPES.DELETE_ORDER:
+                              return {
+                                ...state,
+                                error: false,
+                                loading: false,
+                                message:action.payload
+                              };
+
+
+
+
+                            // EVERYTHING THAT HAS TO DO WITH ORDERS END
+    
+  
+
+
+
+
+
+
+                             // EVERYTHING THAT HAS TO DO WITH CART START
+
+                             case TYPES.GET_ALL_CARTS:
+                              return {
+                                ...state,
+                                error: false,
+                                loading: false,
+                                cart:action.payload
+                              };
+
+
+                                
+                        
+                                
+                            case TYPES.DELETE_CART:
+                              return {
+                                ...state,
+                                error: false,
+                                loading: false,
+                                message:action.payload
+                              };
+
+
+
+
+                            // EVERYTHING THAT HAS TO DO WITH CART END
     
   
 

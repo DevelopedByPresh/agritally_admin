@@ -29,14 +29,14 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from "../../Actions/Actions"
+import { ClearError, GetAllAdmins, DeleteAdmin, UpdateAdmin,  ClearMessage} from "../../Actions/Actions"
 
 
 
 
 
 
- const Users=()=> {
+ const Admins=()=> {
 
 
   useEffect(()=>{
@@ -52,7 +52,7 @@ import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from 
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
   const loading = useSelector((state)=>state?.Admin?.loading)
-  const staff = useSelector((state)=>state?.Admin?.staff)
+  const AllAdmin = useSelector((state)=>state?.Admin?.Admins)
 
 
   
@@ -80,11 +80,11 @@ const handleChange = (e)=>{
   setUser({...user, [name]:value})
 }
 
-const UpdateSingleStaff =(e)=>{
+const UpdateSingleAdmin =(e)=>{
   e.preventDefault()
   const user = {role}
   
-  dispatch(UpdateStaff(user))
+  dispatch(UpdateAdmin(user))
  
 }
 
@@ -107,7 +107,7 @@ const Role= [
 
 
 useEffect(()=>{
-  dispatch(GetAllStaff())
+  dispatch(GetAllAdmins())
 },[])
 
 
@@ -128,7 +128,7 @@ useEffect(()=>{
 
     const handleClickOpenEdit = (user) => {
       setOpenEdit(true);
-      sessionStorage.setItem('UserUpdateId', user?._id)
+      sessionStorage.setItem('AdminUpdateId', user?._id)
      setUser({...user});
     
   };
@@ -142,7 +142,7 @@ useEffect(()=>{
 
   const handleClickOpenDeleteUser = (id) => {
     setOpenDeleteUser(true);
-    sessionStorage.setItem('userId', id)
+    sessionStorage.setItem('AdminId', id)
   
 };
 
@@ -247,8 +247,8 @@ const handleClickCloseDeleteUser = () => {
      },
 
      {
-      name: "Staff Role",
-      label: "Staff Role",
+      name: "Admin Role",
+      label: "Admin Role",
       options: {
        filter: true,
        sort: false,
@@ -284,8 +284,8 @@ const handleClickCloseDeleteUser = () => {
 
 
    const data =
-   staff &&
-   staff?.map((user) => {
+   AllAdmin &&
+   AllAdmin?.map((user) => {
 
      return {
         "First Name": user?.firstName,
@@ -293,7 +293,7 @@ const handleClickCloseDeleteUser = () => {
         'Date Of Birth':user?.date_of_birth,
         'Email Address': user?.email,
         'Phone Number':user?.phone,
-        'Staff Role':user?.role,
+        'Admin Role':user?.role,
         Edit:   (
           <EditIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpenEdit(user))}`} />
         ),
@@ -336,7 +336,7 @@ const handleClickCloseDeleteUser = () => {
           <Typography
             variant="h6"
             noWrap
-           // component="a"
+            component="a"
       
             sx={{
               mr: 2,
@@ -467,13 +467,6 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-    {staff?.length > 0 ?
-
-<Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15,} }>
-   All Existing Staff   
-</Typography>: ""}
-
-<br/>
 
 
 
@@ -481,22 +474,21 @@ const handleClickCloseDeleteUser = () => {
 
    
 
-{staff?.length > 0 ?
 
 
-<div style={{width:1800, marginLeft:80}}>
+
+    <div style={{width:1500, textAlign:'center', alignItems:'center', margin:'0 auto'}}>
 <MUIDataTable
-  title={ `Number of Staff : ${data?.length}`}
+  title={ `Number of Admin : ${AllAdmin?.length}`}
   data={data}
   columns={columns}
   options={options}
+ 
+
 />
 
-</div> :
 
-<Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
-     No Existing Staff At the Moment! 
-   </Typography>}
+</div>
 
 
 
@@ -567,15 +559,20 @@ const handleClickCloseDeleteUser = () => {
 
       >
         <DialogTitle id="alert-dialog-title">
-          {"Change Staff's Role"}
+          {"Change Admins's Role"}
         </DialogTitle>
 
+
+
+
         <form>
+        
         <Box
         sx={{
+       
           p: 1,
           m: 1,
-          mt:5,
+          mt:3,
           bgcolor: 'background.paper',
           borderRadius: 1,
         }}
@@ -596,7 +593,12 @@ const handleClickCloseDeleteUser = () => {
 {error &&
 <div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
+
+
+
+
 </div>
 </div>  
  }
@@ -610,6 +612,9 @@ const handleClickCloseDeleteUser = () => {
      
 
 <Box sx={{textAlign:'center',  alignItems:'center'}}>
+
+
+  
 <FormControl sx={{  width: 320, alignItems:'center' }}>
                 <InputLabel id="demo-multiple-name-label">Change Role...</InputLabel>
                 <Select
@@ -631,20 +636,59 @@ const handleClickCloseDeleteUser = () => {
                   ))}
                 </Select>
               </FormControl>
-
+  
+{/* <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      options={["manager", "staff", 'owner','admin', 'superAdmin']}
+     
+      onChange={handleChange}
+      sx={{ ml:10, width: 400 }}
+      renderInput={(params) => <TextField {...params} label="Role" 
+      
+     
+   
+      
+      />}
+    /> */}
         </Box>
+
+
+
+
+
+
+
+
+
  
     </Box><br/>
 
 
+
+
     </form>
+    <br/>
+   
+
+
+ 
+
    
         <DialogActions>
+
+      
+
         <div className="form-group focused" style={{marginRight:10}}>
-         <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }}  onClick={UpdateSingleStaff} >
-            Update
-          </button>
+                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'#012949', }} onClick={UpdateSingleAdmin} >Update </a>
+                  
                  </div>
+ 
+
+
+
+  
+         
         </DialogActions>
       </Dialog>
     </div>
@@ -669,15 +713,22 @@ const handleClickCloseDeleteUser = () => {
         maxWidth="sm"
 
       >
+     
+
         <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Delete this Staff?"}
+          {"Are You Sure You Want To Permanently Delete this Admin?"}
         </DialogTitle>
 
 
+
+
         {message && 
+
 <div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
+
 </div>
 </div>
 }
@@ -685,34 +736,68 @@ const handleClickCloseDeleteUser = () => {
 {error &&
 <div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
+
+
+
+
 </div>
 </div>  
  }
+
+
 
 {loading && error === false ?
           <div className='loader'></div> : ""}
           <br/> 
 
 
- <Box sx={{ display: 'flex',justifyContent: 'center',p: 1, m: 1,mt:1,bgcolor: 'background.paper',borderRadius: 1, }}>
-         <div className="form-group focused" style={{marginRight:10}}>
+
+        <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          p: 1,
+          m: 1,
+          mt:1,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+        }}
+      >
 
 
-         <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }}  onClick={handleClickCloseDeleteUser} >
-            Cancel
-          </button>
-                 
+<div className="form-group focused" style={{marginRight:10}}>
+                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeleteUser}>Cancel </a>
+                  
                  </div>
-                 <div className="form-group focused" style={{marginRight:10}}>
 
-                 <button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'red', }}   onClick={()=>dispatch(DeleteStaff())} >
-                 Delete
-               </button>
-                             
-      </div>
+                 <div className="form-group focused" style={{marginRight:10}}>
+                  <a href="#!" className="btn btn-success"  style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteAdmin())}> Delete </a>
+                  
+                 </div>
+
+       
  
- </Box> 
+    </Box>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+   
+       
       </Dialog>
     </div>
 
@@ -721,16 +806,16 @@ const handleClickCloseDeleteUser = () => {
 
 
 
+{/* 
 
-
-    <Copyright sx={{ mt: 5 }} />
+    <Copyright sx={{ mt: 5 }} /> */}
 
 
     
     </div>
   );
 }
-export default Users;
+export default Admins;
 
 
 

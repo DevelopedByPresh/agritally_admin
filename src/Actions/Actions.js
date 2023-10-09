@@ -18,10 +18,8 @@ export const LoggedOut = ()=>({type:TYPES.LOGOUT,});
 // DELETE START
 
 export const StaffDeleted = (data)=>({type:TYPES.DELETE_STAFF,payload:data});
-export const PoultryProductDeleted = (data)=>({type:TYPES.DELETE_POULTRY_PRODUCTS,payload:data});
-export const PigProductDeleted = (data)=>({type:TYPES.DELETE_PIG_PRODUCTS,payload:data});
-export const EggProductDeleted = (data)=>({type:TYPES.DELETE_EGG_PRODUCTS,payload:data});
-export const CatFishProductDeleted = (data)=>({type:TYPES.DELETE_CATFISH_PRODUCTS,payload:data});
+export const AdminDeleted = (data)=>({type:TYPES.DELETE_ADMIN,payload:data});
+export const ProductDeleted = (data)=>({type:TYPES.DELETE_PRODUCT,payload:data});
 
 // DELETE END
 
@@ -31,11 +29,9 @@ export const CatFishProductDeleted = (data)=>({type:TYPES.DELETE_CATFISH_PRODUCT
 
 // UPDATES START
 
-export const PoultryProductUpdate = (data)=>({type:TYPES.UPDATE_POULTRY_PRODUCTS,payload:data});
-export const EggProductUpdate = (data)=>({type:TYPES.UPDATE_EGG_PRODUCTS,payload:data});
-export const PigProductUpdate = (data)=>({type:TYPES.UPDATE_PIG_PRODUCTS,payload:data});
-export const CatFishProductUpdate = (data)=>({type:TYPES.UPDATE_CATFISH_PRODUCTS,payload:data});
+export const ProductUpdated = (data)=>({type:TYPES.UPDATE_PRODUCT,payload:data});
 export const StaffUpdated = (data)=>({type:TYPES.UPDATE_STAFF,payload:data});
+export const AdminUpdated = (data)=>({type:TYPES.UPDATE_ADMIN,payload:data});
 export const ProfileUpdated = (data)=>({type:TYPES.UPDATE_PROFILE,payload:data});
 
 // UPDATES END
@@ -47,12 +43,34 @@ export const ProfileUpdated = (data)=>({type:TYPES.UPDATE_PROFILE,payload:data})
 
 export const PoultryProducts = (data)=>({type:TYPES.GET_POULTRY_PRODUCTS,payload:data});
 export const AllStaff = (data)=>({type:TYPES.GET_ALL_STAFF,payload:data});
+export const AllAdmin = (data)=>({type:TYPES.GET_ALL_ADMINS,payload:data});
 export const PigProducts = (data)=>({type:TYPES.GET_PIG_PRODUCTS, payload:data});
 export const EggProducts = (data)=>({type:TYPES.GET_EGG_PRODUCTS, payload:data});
 export const CatFishProducts = (data)=>({type:TYPES.GET_CATFISH_PRODUCTS, payload:data});
 export const AdminGotten = (data)=>({type:TYPES.GET_ADMIN, payload:data});
 
 // GETTING ALL PRODUCTS AND STAFF END
+
+
+
+
+// EVERYTHING THAT HAS TO DO WITH ORDER START
+export const AllOrders = (data)=>({type:TYPES.GET_ALL_ORDERS, payload:data});
+export const OrderUpdated = (data)=>({type:TYPES.UPDATE_ORDER, payload:data});
+export const OrderDeleted = (data)=>({type:TYPES.DELETE_ORDER, payload:data});
+
+
+// EVERYTHING THAT HAS TO DO WITH ORDER END
+
+
+
+
+// EVERYTHING THAT HAS TO DO WITH CART START
+export const AllCarts = (data)=>({type:TYPES.GET_ALL_CARTS, payload:data});
+export const CartDeleted = (data)=>({type:TYPES.DELETE_CART, payload:data});
+
+// EVERYTHING THAT HAS TO DO WITH CART END
+
 
 
 
@@ -106,6 +124,7 @@ export const CreateAdmin = (data) => (dispatch) => {
       })
       .catch((error) => {
         dispatch(Error(error?.response?.data?.error))
+      
         
       });
   };
@@ -120,9 +139,9 @@ export const CreateAdmin = (data) => (dispatch) => {
 
   // GETTING PRODUCTS AND STAFF START
 
-  
+
   export const GetPoultryProduct = () => (dispatch) => {
-    dispatch(isLoading());
+  //  dispatch(isLoading());
 
     const AdminToken = sessionStorage.getItem('AdminToken');
     
@@ -132,9 +151,10 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/poultry/getAll`,  { headers: authorization })
+    axios.get(`http://localhost:5000/product/getAll/?category=Poultry`,  { headers: authorization })
       .then((response) => {
         dispatch(PoultryProducts(response?.data?.data));
+   
      
       
 
@@ -152,7 +172,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
     
   export const GetPigProduct = () => (dispatch) => {
-    dispatch(isLoading());
+   // dispatch(isLoading());
 
     const AdminToken = sessionStorage.getItem('AdminToken');
 
@@ -161,9 +181,10 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/pig/getAll/`,  { headers: authorization })
+    axios.get(`http://localhost:5000/product/getAll/?category=Pig`,  { headers: authorization })
       .then((response) => {
         dispatch(PigProducts(response?.data?.data));
+  
      
      
   
@@ -177,7 +198,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
       
   export const GetEggProduct = () => (dispatch) => {
-    dispatch(isLoading());
+  //  dispatch(isLoading());
 
     const AdminToken = sessionStorage.getItem('AdminToken');
 
@@ -186,7 +207,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/egg/getAll/`,  { headers: authorization })
+    axios.get(`http://localhost:5000/product/getAll/?category=Egg`,  { headers: authorization })
       .then((response) => {
         dispatch(EggProducts(response?.data?.data));
 
@@ -206,7 +227,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
       
   export const GetCatFishProduct = () => (dispatch) => {
-    dispatch(isLoading());
+   // dispatch(isLoading());
 
     const AdminToken = sessionStorage.getItem('AdminToken');
 
@@ -215,10 +236,10 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/catFish/getAll/`,  { headers: authorization })
+    axios.get(`http://localhost:5000/product/getAll/?category=Cat-fish`,  { headers: authorization })
       .then((response) => {
         dispatch(CatFishProducts(response?.data?.data));
-        console.log(response)
+    
       
      
   
@@ -241,6 +262,34 @@ export const CreateAdmin = (data) => (dispatch) => {
 
   
   export const GetAllStaff = () => (dispatch) => {
+   // dispatch(isLoading());
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: `Bearer ${AdminToken}`,
+    };
+  
+    axios.get(`http://localhost:5000/admin/users/getAll`, { headers: authorization })
+      .then((response) => {
+        dispatch(AllStaff(response?.data?.data));
+   
+    
+     
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+
+        
+      });
+  };
+
+
+
+
+    
+  export const GetAllAdmins = () => (dispatch) => {
     dispatch(isLoading());
     const AdminToken = sessionStorage.getItem('AdminToken');
 
@@ -249,9 +298,10 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: `Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/user/getAll`, { headers: authorization })
+    axios.get(`http://localhost:5000/admin/getAll`, { headers: authorization })
       .then((response) => {
-        dispatch(AllStaff(response?.data?.data));
+        dispatch(AllAdmin(response?.data?.data));
+ 
     
      
   
@@ -268,10 +318,10 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
   export const GetAdmin = () => (dispatch) => {
-    dispatch(isLoading());
+  //  dispatch(isLoading());
     const AdminToken = sessionStorage.getItem('AdminToken');
     const admin = JSON.parse(sessionStorage.getItem('Admin'))
-    const id = admin?._id
+    const id = admin?.id
 
     const authorization = {
       "Content-Type": "application/json",
@@ -306,8 +356,8 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
 
-  export const DeletePoultryProduct = () => (dispatch) => {
-    const id = sessionStorage.getItem('PoultryId')
+  export const DeleteProduct = () => (dispatch) => {
+    const id = sessionStorage.getItem('ProductDeleteID')
 
     const AdminToken = sessionStorage.getItem('AdminToken');
 
@@ -316,106 +366,36 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     }
 
+  
 
     dispatch(isLoading());
-    axios.delete(`http://localhost:5000/poultry/delete/${id}`, { headers: authorization } )
+    axios.delete(`http://localhost:5000/product/delete/${id}`, { headers: authorization } )
       .then((response) => {
-        dispatch(PoultryProductDeleted(response?.data?.message));
+        dispatch(ProductDeleted(response?.data?.message));
+
+        
         dispatch(GetPoultryProduct());
-    
-      //  sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
-  
-      })
-      .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
-
-        
-      });
-  };
-
-
-
-  export const DeletePigProduct = () => (dispatch) => {
-    const id = sessionStorage.getItem('PigId')
-
-    const AdminToken = sessionStorage.getItem('AdminToken');
-
-    const authorization = {
-      "Content-Type": "application/json",
-       Authorization: ` Bearer ${AdminToken}`,
-    }
-
-    dispatch(isLoading());
-    axios.delete(`http://localhost:5000/pig/delete/${id}`, { headers: authorization })
-      .then((response) => {
-        dispatch(PigProductDeleted(response?.data?.message));
         dispatch(GetPigProduct());
+        dispatch(GetEggProduct());
+        dispatch(GetEggProduct());
+        dispatch(GetCatFishProduct());
+       
     
       //  sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
   
       })
       .catch((error) => {
         dispatch(Error(error?.response?.data?.error))
-      
-        
-      });
-  };
-
-
-  export const DeleteEggProduct = () => (dispatch) => {
-    const id = sessionStorage.getItem('EggId')
-
-    const AdminToken = sessionStorage.getItem('AdminToken');
-
-    const authorization = {
-      "Content-Type": "application/json",
-       Authorization: ` Bearer ${AdminToken}`,
-    }
-
-    dispatch(isLoading());
-    axios.delete(`http://localhost:5000/egg/delete/${id}`, { headers: authorization })
-      .then((response) => {
-        dispatch(EggProductDeleted(response?.data?.message));
-        dispatch(GetEggProduct());
-     
-      //  sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
-  
-      })
-      .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
-   
-        
-      });
-  };
-
-
-
-  export const DeleteCatFishProduct = () => (dispatch) => {
-    const id = sessionStorage.getItem('CatFishId')
-
-    const AdminToken = sessionStorage.getItem('AdminToken');
-
-    const authorization = {
-      "Content-Type": "application/json",
-       Authorization: ` Bearer ${AdminToken}`,
-    }
-
-    dispatch(isLoading());
-    axios.delete(`http://localhost:5000/catFish/delete/${id}`, { headers: authorization })
-      .then((response) => {
-        dispatch(CatFishProductDeleted(response?.data?.message));
-        dispatch(GetCatFishProduct());
-      
-      //  sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
-  
-      })
-      .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
 
         
       });
   };
 
+
+
+
+
+ 
 
 
   export const DeleteStaff = () => (dispatch) => {
@@ -444,6 +424,39 @@ export const CreateAdmin = (data) => (dispatch) => {
       });
   };
 
+
+
+
+
+
+
+  
+  export const DeleteAdmin = () => (dispatch) => {
+    const id = sessionStorage.getItem('AdminId')
+
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: ` Bearer ${AdminToken}`,
+    }
+
+    dispatch(isLoading());
+    axios.delete(`http://localhost:5000/admin/delete/${id}`, { headers: authorization })
+      .then((response) => {
+        dispatch(AdminDeleted(response?.data?.message));
+        dispatch(GetAllAdmins());
+ 
+
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+      
+        
+      });
+  };
+
 // DELETE ALL PRODUCTS AND STAFF END
 
 
@@ -459,8 +472,8 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
 
-  export const UpdatePoultryProduct = (product, id) => (dispatch) => {
-    const id = sessionStorage.getItem('PoultryUpdateId')
+  export const UpdateProduct = (product, id) => (dispatch) => {
+    const id = sessionStorage.getItem('ProductUpdateId')
 
     const AdminToken = sessionStorage.getItem('AdminToken');
 
@@ -472,105 +485,16 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
     dispatch(isLoading());
-    axios.patch(`http://localhost:5000/poultry/update/${id}`, product,  {headers:authorization})
+    axios.patch(`http://localhost:5000/product/update/${id}`, product,  {headers:authorization})
       .then((response) => {
-        dispatch(PoultryProductUpdate(response?.data?.message));
+        dispatch(ProductUpdated(response?.data?.message));
         dispatch(GetPoultryProduct());
-      
-
-  
-      })
-      .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
-    
-        
-      });
-  };
-
-
-
-
-  export const UpdateEggProduct = (product, id) => (dispatch) => {
-    const id = sessionStorage.getItem('EggUpdateId')
-
-    const AdminToken = sessionStorage.getItem('AdminToken');
-
-    const authorization = {
-      "Content-Type": "application/json",
-       Authorization: `Bearer ${AdminToken}`,
-    };
-  
-
-
-    dispatch(isLoading());
-    axios.patch(`http://localhost:5000/egg/update/${id}`, product,  {headers:authorization})
-      .then((response) => {
-        dispatch(EggProductUpdate(response?.data?.message));
-        dispatch(GetEggProduct());
-  
-  
-      })
-      .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
-    
-        
-      });
-  };
-
-
-
-
-  
-  export const UpdateCatFishProduct = (product, id) => (dispatch) => {
-    const id = sessionStorage.getItem('CatFishUpdateId')
-
-    const AdminToken = sessionStorage.getItem('AdminToken');
-
-    const authorization = {
-      "Content-Type": "application/json",
-       Authorization: `Bearer ${AdminToken}`,
-    };
-  
-
-
-    dispatch(isLoading());
-    axios.patch(`http://localhost:5000/catFish/update/${id}`, product,  {headers:authorization})
-      .then((response) => {
-        dispatch(CatFishProductUpdate(response?.data?.message));
-        dispatch(GetCatFishProduct());
-    
-  
-      })
-      .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
-      
-        
-      });
-  };
-
-
-
-
-
-
-
-  export const UpdatePigProduct = (product, id) => (dispatch) => {
-    const id = sessionStorage.getItem('PigUpdateId')
-
-    const AdminToken = sessionStorage.getItem('AdminToken');
-
-    const authorization = {
-      "Content-Type": "application/json",
-       Authorization: `Bearer ${AdminToken}`,
-    };
-  
-
-
-    dispatch(isLoading());
-    axios.patch(`http://localhost:5000/pig/update/${id}`, product,  {headers: authorization})
-      .then((response) => {
-        dispatch(PigProductUpdate(response?.data?.message));
         dispatch(GetPigProduct());
+        dispatch(GetEggProduct());
+        dispatch(GetEggProduct());
+        dispatch(GetCatFishProduct());
+  
+      
 
   
       })
@@ -595,8 +519,8 @@ export const CreateAdmin = (data) => (dispatch) => {
   
 
 
-    dispatch(isLoading());
-    axios.patch(`http://localhost:5000/user/update/${id}`, staff,  {headers:authorization})
+  //  dispatch(isLoading());
+    axios.patch(`http://localhost:5000/user//update-profile/${id}`, staff,  {headers:authorization})
       .then((response) => {
         dispatch(StaffUpdated(response?.data?.message));
         dispatch(GetAllStaff());
@@ -613,9 +537,41 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
 
+
+
+
+  export const UpdateAdmin = (staff,) => (dispatch) => {
+    const id = sessionStorage.getItem('AdminUpdateId')
+
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: `Bearer ${AdminToken}`,
+    };
+  
+
+
+   // dispatch(isLoading());
+    axios.patch(`http://localhost:5000/admin/update-profile/${id}`, staff,  {headers:authorization})
+      .then((response) => {
+        dispatch(AdminUpdated(response?.data?.message));
+        dispatch(GetAllAdmins());
+     
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+  
+        
+      });
+  };
+
+
+
   export const UpdateProfile = (profile) => (dispatch) => {
     const admin = JSON.parse(sessionStorage.getItem('Admin'))
-    const id = admin?._id
+    const id = admin?.id
 
     const AdminToken = sessionStorage.getItem('AdminToken');
 
@@ -651,8 +607,175 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
 
+
+  // EVERYTHING THAT HAS TO DO WITH ORDERS START
+
+
+  
+  export const GetAllOrders = () => (dispatch) => {
+   // dispatch(isLoading());
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: `Bearer ${AdminToken}`,
+    };
+  
+    axios.get(`http://localhost:5000/order/getAll/`, { headers: authorization })
+      .then((response) => {
+        dispatch(AllOrders(response?.data?.data));
+    
+     
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+
+        
+      });
+  };
+
+
+
+
+
+
+  
+  export const UpdateOrder = (order,) => (dispatch) => {
+    const id = sessionStorage.getItem('OrderUpdateId')
+
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: `Bearer ${AdminToken}`,
+    };
+  
+
+
+    //dispatch(isLoading());
+    axios.patch(`http://localhost:5000/order/update/${id}`, order,  {headers:authorization})
+      .then((response) => {
+        dispatch(OrderUpdated(response?.data?.message));
+        dispatch(GetAllOrders());
+     
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+  
+        
+      });
+  };
+
+
+
+
+  export const DeleteOrder = () => (dispatch) => {
+    const id = sessionStorage.getItem('orderId')
+
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: ` Bearer ${AdminToken}`,
+    }
+
+   // dispatch(isLoading());
+    axios.delete(`http://localhost:5000/order/delete/${id}`, { headers: authorization })
+      .then((response) => {
+        dispatch(OrderDeleted(response?.data?.message));
+        dispatch(GetAllOrders());
  
 
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+      
+        
+      });
+  };
+
+
+  // EVERYTHING THAT HAS TO DO WITH ORDERS END
+
+
+
+ 
+
+
+
+
+
+
+  
+
+  // EVERYTHING THAT HAS TO DO WITH ORDERS START
+
+
+  
+  export const GetAllCart = () => (dispatch) => {
+    dispatch(isLoading());
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: `Bearer ${AdminToken}`,
+    };
+  
+    axios.get(`http://localhost:5000/cart/getAll/`, { headers: authorization })
+      .then((response) => {
+        dispatch(AllCarts(response?.data?.data));
+   
+    
+     
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+
+        
+      });
+  };
+
+
+
+
+
+
+
+
+
+
+  export const DeleteCart = () => (dispatch) => {
+    const id = sessionStorage.getItem('CartId')
+
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: ` Bearer ${AdminToken}`,
+    }
+
+    dispatch(isLoading());
+    axios.delete(`http://localhost:5000/cart/delete/${id}`, { headers: authorization })
+      .then((response) => {
+        dispatch(CartDeleted(response?.data?.message));
+        dispatch(GetAllCart());
+ 
+
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+      
+        
+      });
+  };
+
+
+  // EVERYTHING THAT HAS TO DO WITH ORDERS END
 
 
   
