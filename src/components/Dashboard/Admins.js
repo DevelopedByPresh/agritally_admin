@@ -421,7 +421,7 @@ const handleClickCloseDeleteUser = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open Profile">
+            <Tooltip >
               {/* <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="https://demos.creative-tim.com/argon-dashboard/assets-old/img/theme/team-4.jpg" />
               </IconButton> */}
@@ -477,7 +477,7 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-    <div style={{width:1500, textAlign:'center', alignItems:'center', margin:'0 auto'}}>
+    <div style={{width:1800, marginLeft:80}}>
 <MUIDataTable
   title={ `Number of Admin : ${AllAdmin?.length}`}
   data={data}

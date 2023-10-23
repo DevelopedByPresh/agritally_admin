@@ -17,7 +17,8 @@ const initialState = {
     Admin:[],
     orders:[],
     cart:[],
-    Admins:[]
+    Admins:[],
+    transactions:[]
 }
 
 
@@ -384,6 +385,59 @@ const AdminReducer = (state=initialState, action) =>{
 
 
                             // EVERYTHING THAT HAS TO DO WITH CART END
+
+
+
+
+
+
+                                     // EVERYTHING THAT HAS TO DO WITH TRANSACTIONS START
+
+                                     case TYPES.CREATE_TRANSACTIONS:
+                                      return {
+                                        ...state,
+                                        error: false,
+                                        loading: false,
+                                        message:action.payload
+                                       
+                                      };
+        
+        
+                                      case TYPES.GET_ALL_TRANSACTIONS:
+                                        return {
+                                          ...state,
+                                          error: false,
+                                          loading: false,
+                                          transactions:action.payload
+                                         
+                                        };
+        
+                                        
+                                        case TYPES.UPDATE_TRANSACTION:
+                                          return {
+                                            ...state,
+                                            error: false,
+                                            loading: false,
+                                            message:action.payload
+                                           
+                                          };
+        
+                                          
+                                          case TYPES.DELETE_TRANSACTION:
+                                            return {
+                                              ...state,
+                                              error: false,
+                                              loading: false,
+                                              message:action.payload
+                                             
+                                            };
+              
+                                
+                             
+        
+        
+        
+                                    // EVERYTHING THAT HAS TO DO WITH TRANSACTIONS END
     
   
 

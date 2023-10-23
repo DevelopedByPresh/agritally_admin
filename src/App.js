@@ -20,7 +20,9 @@ const  Users = lazy(()=> import("./components/Dashboard/Users"))
 const  Admins = lazy(()=> import("./components/Dashboard/Admins"))
 const  Orders = lazy(()=> import("./components/Dashboard/Orders"))
 const  Carts = lazy(()=> import("./components/Dashboard/Carts"))
+const  Transactions = lazy(()=> import("./components/Dashboard/Transactions"))
 const  AllProductReport = lazy(()=> import("./components/Dashboard/AllProductReport"))
+
 
 
 
@@ -43,6 +45,7 @@ function App() {
                 <Route element={<Admins/>} path="/Dashboard/Admins"/>
                 <Route element={<Orders/>} path="/Dashboard/Orders"/>
                 <Route element={<Carts/>} path="/Dashboard/Carts"/>
+                <Route element={<Transactions/>} path="/Dashboard/Transactions"/>
                 <Route element={<AllProductReport/>} path="/Dashboard/AllProductReport"/>
             </Route>
             <Route element={<Login/>} path="/"/>

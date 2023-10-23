@@ -21,25 +21,31 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {Link} from 'react-router-dom'
-
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import FormControl, { useFormControl } from '@mui/material/FormControl';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import TextField from '@mui/material/TextField';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError,  ClearMessage,GetAllCart, DeleteCart, } from "../../Actions/Actions"
+import { ClearError, DeleteTransaction,   ClearMessage, GetAllTransactions, UpdateTransaction} from "../../Actions/Actions"
 
 
 
 
 
 
- const Carts=()=> {
+ const Transactions=()=> {
     const dispatch = useDispatch()
 
   useEffect(()=>{
     document.body.style.zoom = "70%";
-    dispatch(GetAllCart())
+    dispatch(GetAllTransactions())
     
   
   },[])
@@ -52,8 +58,12 @@ import { ClearError,  ClearMessage,GetAllCart, DeleteCart, } from "../../Actions
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
   const loading = useSelector((state)=>state?.Admin?.loading)
-  const Carts = useSelector((state)=>state?.Admin?.cart)
- 
+
+  const Transactions = useSelector((state)=>state?.Admin?.transactions)
+
+  const orders = useSelector((state)=>state?.Admin?.orders)
+
+  const singleTransaction = JSON.parse(sessionStorage.getItem('singleTransaction'))
 
 
   
@@ -63,7 +73,6 @@ const settings = [ 'Logout', 'Reset Password','Profile', 'Dashboard',];
 const [open, setOpen] = useState(false);
 
 const [tableBodyHeight, setTableBodyHeight] = useState("400px");
-const [tableBodyHeight2, setTableBodyHeight2] = useState("200px");
 
 const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
 const [searchBtn, setSearchBtn] = useState(true);
@@ -74,9 +83,62 @@ const [filterBtn, setFilterBtn] = useState(true);
 const [anchorElNav, setAnchorElNav] = useState(null);
 const [anchorElUser, setAnchorElUser] = useState(null);
 
+const [openEdit, setOpenEdit] = useState(false);
+const [editTransactions, setEditTransaction] = useState(false);
+const [openDeleteTransaction, setOpenDeleteTransaction] = useState(false);
 
-const [openDeleteCart, setOpenDeleteCart] = useState(false);
-const [singleCart, setSingleCart] = useState([])
+
+
+
+const [transaction, setTransaction] = useState({
+
+  amount:'',
+  type:'',
+})
+
+const { amount, type} = transaction
+
+
+
+
+
+
+const handleChangeTransactions = (e)=>{
+  const {name, value} = e.target
+  setTransaction({...transaction, [name]:value})
+}
+
+
+
+
+
+
+
+const UpdateSinglTransaction =(e)=>{
+  e.preventDefault()
+  const data = { amount, type} 
+  
+  dispatch(UpdateTransaction(data))
+ 
+}
+
+
+
+
+
+
+
+
+
+
+
+const types= [
+  { label: 'Purchase' },
+  { label: 'Sale'  },
+  { label: 'Mortality'  },
+
+
+];
 
 
 
@@ -88,9 +150,9 @@ const handleFocus = ()=>{
 
 
 
-  const handleClickOpen = (cartItems) => {
-  
-    setSingleCart(cartItems)
+  const handleClickOpen = (transaction) => {
+    sessionStorage.setItem('singleTransaction', JSON.stringify(transaction))
+
     setOpen(true);
   };
 
@@ -101,13 +163,33 @@ const handleFocus = ()=>{
 
 
 
-  const handleClickOpenDeleteCart = (id) => {
-    setOpenDeleteCart(true);
-    sessionStorage.setItem('CartId', id)
+  const handleOpenTransactions = (transaction) => {
+      
+    setEditTransaction(true);
+    sessionStorage.setItem('TransactionUpdateId', transaction?.id)
+    setTransaction(transaction);
+  
 };
 
-const handleClickCloseDeleteCart = () => {
-  setOpenDeleteCart(false);
+
+
+
+const handleCloseTransactions  = () => {
+  setEditTransaction(false);
+  dispatch(ClearError())
+};
+
+
+
+
+
+  const handleClickOpenDeleteTransaction = (id) => {
+    setOpenDeleteTransaction(true);
+    sessionStorage.setItem('TransactionId', id)
+};
+
+const CloseDeleteTransaction = () => {
+  setOpenDeleteTransaction(false);
   dispatch(ClearError())
 };
 
@@ -150,84 +232,20 @@ const handleClickCloseDeleteCart = () => {
     if(message){
 
       dispatch(ClearMessage())
-      setOpenDeleteCart(false);
-
+      setOpenDeleteTransaction(false);
+      setOpenEdit(false);
+      setEditTransaction(false);
      
     }
   
  
-  },3000)
+  },2000)
 
 
 
 
 
-  const columns2 = [
-
-
-
-    {
-      name: "Product",
-      label: "Product",
-      options: {
-       filter: true,
-       sort: false,
-      }
-     },
-
-
-     {
-      name: "Product Section",
-      label: "Product Section",
-      options: {
-       filter: true,
-       sort: false,
-      }
-     },
-
-
-
-
-
-
-    {
-     name: "Quantity",
-     label: "Quantity",
-     options: {
-      filter: true,
-      sort: false,
-     }
-    },
-    {
-     name: " Unit Price",
-     label: " Unit Price",
-     options: {
-      filter: true,
-      sort: false,
-     }
-    },
-  
-
-
-     {
-      name: "Total Amount",
-      label: "Total Amount",
-      options: {
-       filter: true,
-       sort: false,
-      }
-     },
-
-
-   
-
-
-
-
-    
-   ];
-
-   const columns = [
+  const columns = [
     {
      name: "Date Created",
      label: "Date Created",
@@ -237,38 +255,45 @@ const handleClickCloseDeleteCart = () => {
      }
     },
     {
-     name: "Created By",
-     label: "Created By",
+     name: "Type",
+     label: "Type",
+     options: {
+      filter: true,
+      sort: true,
+     }
+    },
+    {
+     name: "Amount",
+     label: "Amount",
      options: {
       filter: true,
       sort: false,
      }
     },
     {
-     name: "Number of Cart",
-     label: "Number of Cart",
-     options: {
-      filter: true,
-      sort: false,
-     }
-    },
-    {
-      name: "Status",
-      label: "Status",
+      name: "Total",
+      label: "Total",
+      options: {
+       filter: true,
+       sort: true,
+      }
+     },
+
+     
+     {
+      name: "Order Status",
+      label: " Order Status",
       options: {
        filter: true,
        sort: false,
       }
      },
 
-     
- 
-
      {
-      name: "Total Amount",
-      label: "Total Amount",
+      name: "Remark",
+      label: "Remark",
       options: {
-       filter: true,
+       filter: false,
        sort: false,
       }
      },
@@ -279,21 +304,36 @@ const handleClickCloseDeleteCart = () => {
       name: "Details",
       label: "Details",
       options: {
-       filter: true,
+       filter: false,
        sort: false,
       }
      },
 
 
+     {
+        name: "Edit",
+        label: "Edit",
+        options: {
+         filter: false,
+         sort: false,
+        }
+       },
 
+
+
+
+         
        {
         name: "Delete",
         label: "Delete",
         options: {
-         filter: true,
+         filter: false,
          sort: false,
         }
        },
+
+
+
 
 
 
@@ -302,56 +342,37 @@ const handleClickCloseDeleteCart = () => {
 
 
 
-   const data2 =
-   singleCart &&
-   singleCart?.map((cart) => {
- 
-
- 
-
-     return {
-  
-        'Quantity': cart?.quantity,
-        ' Unit Price': '₦' + cart?.price,
-    
-        "Total Amount": '₦' + cart?.subtotal,
-        Product:  cart?.productId?.category,
-        "Product Section":  cart?.productId?.section,
-     
-
-   
-
-     };
-   });
- 
-
 
    const data =
-   Carts &&
-   Carts?.map((cart) => {
-    var date = cart?.createdAt,
+   Transactions &&
+   Transactions?.map((transaction) => {
+    var date = transaction?.createdAt,
     newDate = (new Date(date))?.toString();
-
-    const noCart = cart?.cartItems?.length
- 
 
      return {
         "Date Created":  newDate,
-        'Created By': cart?.user?.firstName + " " + cart?.user?.lastName,
-        'Number of Cart':   (<h5 style={{marginLeft:30}}>{noCart} </h5>),
-        Status: cart?.active?.toLocaleString(),
-        "Total Amount": (<h5 style={{marginLeft:30}}>₦{cart?.total} </h5>),
-     
+        Type: transaction?.type,
+        Amount:  '₦' + transaction?.amount,
+        'Total': ' ₦' + transaction?.orderId?.total,
+        "Order Status": transaction?.orderId?.status,
+        Remark:  transaction?.orderId?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
+       
 
           Details:   (
-            <VisibilityIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpen(cart?.cartItems))}`} />
+            <VisibilityIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpen(transaction))}`} />
           ),
-     
+          Edit:   (
+            <EditIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleOpenTransactions(transaction))}`} />
+          ),
+
+
+    
 
           Delete:   (
-            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteCart(cart?._id))}`}  />
+            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteTransaction(transaction?.id))}`}  />
           ),
   
+
 
      };
    });
@@ -381,21 +402,6 @@ const handleClickCloseDeleteCart = () => {
   };
 
 
-  const options2 = {
-    filterType: 'checkbox',
-
-    search: searchBtn,
-    download: downloadBtn,
-    print: printBtn,
-    viewColumns: viewColumnBtn,
-    filter: filterBtn,
-    filterType: "dropdown",
-  
-    tableBodyHeight2,
-    tableBodyMaxHeight,
-  };
-
-
 
 
 
@@ -408,11 +414,11 @@ const handleClickCloseDeleteCart = () => {
 <AppBar position="static" sx={{  backgroundColor: '#012949' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-     <Link to="/Dashboard" style={{color:'white'}}>
+        <Link to="/Dashboard" style={{color:'white'}}>
           <Typography
             variant="h6"
             noWrap
-          //  component="a"
+           // component="a"
       
             sx={{
               mr: 2,
@@ -540,41 +546,39 @@ const handleClickCloseDeleteCart = () => {
 
 
 
-    {Carts?.length > 0 ?
+    {Transactions?.length > 0 ?
 
-<Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15,} }>
-All Carts Created By Every Staff
-</Typography>: ""}
+    <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15,} }>
+   All Transactions Created By Every Admin/Super Admin
+   </Typography>: ""}
 
 <br/>
 
 
 
 
+   
+
+{Transactions?.length > 0 ?
 
 
-
-   {Carts?.length >0 ?
-
-
-
-
-<div style={{width:1800, marginLeft:80}}>
+    <div style={{width:1800, marginLeft:80}}>
 <MUIDataTable
-  title={ `Number of Cart : ${data?.length}`}
+  title={ `Number of Transactions : ${data?.length}`}
   data={data}
   columns={columns}
   options={options}
  
 
 />
+</div> : 
 
 
-</div> :  
 
 <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
-     No Cart created By Staff yet! 
+     No Existing Transactions At the Moment! 
    </Typography>}
+
 
 
 
@@ -590,44 +594,44 @@ All Carts Created By Every Staff
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogContent><br/>
-        <l1>No of Items : {singleCart?.length}</l1>
-    <br/>
-    <br/>
-    <br/>
-{singleCart && singleCart?.map((item=>(
-  <div>
+        <div id="alert-dialog-title h3" style={{marginTop:20, marginLeft:25}}>
+          <h3 style={{display:'inline'}}> Transaction  Details  </h3> 
+        </div>
+      
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+
+           Order Was Placed By :  {singleTransaction?.orderId?.cartId?.user?.firstName + " " + singleTransaction?.orderId?.cartId?.user?.lastName}
+          </DialogContentText>
+          <br/>
+
+          <DialogContentText id="alert-dialog-description">
+          Product Ordered: {singleTransaction?.orderId?.cartId?.cartItems?.[0]?.productId?.category}
+          </DialogContentText>
+          <br/>
+
+          <DialogContentText id="alert-dialog-description">
+          Product Section: {singleTransaction?.orderId?.cartId?.cartItems?.[0]?.productId?.section}
+          </DialogContentText>
+          <br/>
+
+          <DialogContentText id="alert-dialog-description">
+        Quantity Ordered : {singleTransaction?.orderId?.cartId?.cartItems?.[0]?.quantity}
+          </DialogContentText><br/>
+
+          <DialogContentText id="alert-dialog-description">
+        Unit Price :   { '₦' + singleTransaction?.orderId?.cartId?.cartItems?.[0]?.price}
+          </DialogContentText><br/>
+
+
+
+          <DialogContentText id="alert-dialog-description">
+        Total :  { '₦' + singleTransaction?.orderId?.cartId?.cartItems?.[0]?.subtotal}
+          </DialogContentText>
+          <br/>
+
+
    
-
-<div style={{display:'flex', justifyContent:'space-around'}}>
-  <li>Product : {item?.productId?.category} </li>  
-  <li> Category : {item?.productId?.section}</li>  
-  <li> Quantity : {item?.quantity}</li> 
-  <li> Price : ₦ {item?.price}</li>  
- 
-  <li> Total : ₦{item?.subtotal}</li>  
-  </div>
-  <hr/>
-  </div>
-)))}
-        <ul>
-
-        </ul>
-{/*           
-    <div style={{width:800, margin:"0 auto", alignItems:'center', textAlign:'center'}}>
-<MUIDataTable
-  title={ `Number of Cart Created : ${singleCart?.length}`}
-  data={data2}
-  columns={columns2}
-  options={options2}
- 
-
-/>
-
-
-</div> */}
-    
-
 
        
         </DialogContent>
@@ -649,22 +653,23 @@ All Carts Created By Every Staff
 
 
 
-
 {/* Delete Modal */}
 
     <div>
       
       <Dialog
-        open={openDeleteCart}
-        onClose={handleClickCloseDeleteCart}
+        open={openDeleteTransaction}
+        onClose={CloseDeleteTransaction}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
         maxWidth="sm"
 
       >
+     
+
         <DialogTitle id="alert-dialog-title" sx={{textAlign:'center'}}>
-          {"Are You Sure You Want To Permanently delete This Cart?"}
+          {"Are You Sure You Want To Permanently delete This Transaction?"}
         </DialogTitle>
 
 
@@ -672,7 +677,7 @@ All Carts Created By Every Staff
 
         {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'50%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -699,6 +704,17 @@ All Carts Created By Every Staff
 {loading && error === false ?
           <div className='loader'></div> : ""}
           <br/> 
+
+
+
+
+
+
+
+
+
+
+
         <Box
         sx={{
           display: 'flex',
@@ -712,22 +728,45 @@ All Carts Created By Every Staff
       >
 
 <div className="form-group focused" style={{marginRight:10}}>
-<button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'red', }}  onClick={()=>dispatch(DeleteCart())} >
+
+<button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'red', }} onClick={()=>dispatch(DeleteTransaction())}>
             Delete
-          </button>
+          </button>                  
                  </div>
 
 
 
 
 <div className="form-group focused" style={{marginRight:10}}>
-<button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeleteCart} >
+<button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={CloseDeleteTransaction}>
             Cancel
-          </button>
+          </button>  
+                  
                  </div>
+
+              
+
+       
+ 
     </Box>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+   
+       
       </Dialog>
     </div>
 
@@ -738,14 +777,168 @@ All Carts Created By Every Staff
 
 
 
-    {/* <Copyright sx={{ mt: 5 }} /> */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/* edit Transaction Modal */}
+
+    
+<div>
+      
+      <Dialog
+        open={editTransactions}
+        onClose={handleCloseTransactions}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth
+        maxWidth="md"
+
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Edit Transactions"}
+        </DialogTitle>
+
+
+
+
+        <form>
+        
+        <Box
+        sx={{
+       
+          p: 1,
+          m: 1,
+          mt:2,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+        }}
+      >
+
+
+{message && 
+
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
+<strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
+
+</div>
+</div>
+}
+
+{error &&
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
+<strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
+
+
+
+
+</div>
+</div>  
+ }
+
+
+{loading && error === false ?
+          <div className='loader'></div> : ""}
+          <br/> 
+    
+          
+     
+
+<Box sx={{ display:'flex',  textAlign:'center',  alignItems:'center'}}>
+
+
+
+
+  
+<FormControl sx={{  width: 320, marginLeft:10 , alignItems:'center' }}>
+                <InputLabel id="demo-multiple-name-label">Select Type...</InputLabel>
+                <Select
+                  sx={{ width: 330, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                  value={type}
+                  name="type"
+                  onFocus={handleFocus}
+                  fullWidth
+               
+                  input={<OutlinedInput label="Select Type..." />}
+                  onChange={handleChangeTransactions}
+                >
+                  {types.map((value, key) => (
+                    <MenuItem key={key} value={value.label}> 
+                      
+                      {value.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+
+
+
+<Box sx={{ml:8}}>
+         <TextField
+          label="Amount (₦)"
+          id="outlined-start-adornment"
+          sx={{ width: 330 }}
+          onChange={handleChangeTransactions}
+          name='amount'
+          value={amount}
+        onFocus={handleFocus}
+        /> 
+
+       </Box>
+
+
+
+
+        </Box>
+
+    </Box><br/>
+
+
+
+
+    </form>
+    <br/>
+        <DialogActions>
+        <div className="form-group focused" style={{marginRight:10}}>
+
+        <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={UpdateSinglTransaction} >
+            Update Transaction
+          </button> 
+                 </div>
+        </DialogActions>
+      </Dialog>
+    </div>
+
+{/* End of edit Transaction Modal */}
+
+
+
+
+    <Copyright sx={{ mt: 5 }} />
 
 
     
     </div>
   );
 }
-export default Carts;
+export default Transactions;
 
 
 

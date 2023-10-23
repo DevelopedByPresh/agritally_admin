@@ -32,8 +32,21 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { PieChart } from '@mui/x-charts/PieChart';
 
 import MUIDataTable from "mui-datatables";
-import {GetAdmin} from "../../Actions/Actions"
 import {useSelector, useDispatch} from 'react-redux'
+
+
+import {
+    
+    GetPigProduct,
+    GetPoultryProduct, 
+     GetEggProduct,
+     GetCatFishProduct,
+     GetAdmin
+   
+    
+    } 
+from "../../Actions/Actions"
+
 
 
 
@@ -47,8 +60,17 @@ function Dashboard() {
   useEffect(()=>{
     document.body.style.zoom = "65%";
     dispatch(GetAdmin())
+    dispatch(GetPigProduct())
+    dispatch(GetPoultryProduct())
+    dispatch(GetEggProduct())
+    dispatch(GetCatFishProduct())
   
   },[])
+
+  const poultry = useSelector((state)=>state?.Admin?.poultyProduct)
+  const pig = useSelector((state)=>state?.Admin?.pigProduct)
+  const egg = useSelector((state)=>state?.Admin?.eggProduct)
+  const catFish = useSelector((state)=>state?.Admin?.catFishProduct)
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -443,6 +465,13 @@ function Dashboard() {
            </li>
 
 
+           <li className="list-group-item list-group-item-action py-2 ripple"><i className="fas fa-users fa-fw me-3"></i>
+           <Link to="/Dashboard/Transactions" >
+           <span style={{color:'black'}}>All Transactions</span> 
+           </Link>
+           </li>
+
+
            
   
    
@@ -595,6 +624,7 @@ function Dashboard() {
                             {/* <span className="las la-eye"></span> */}
                         </div>
                         <div className="card-progress">
+                            <small>In Stock : {egg?.length}</small><br/>
                             <small>$653,200</small><br/>
                             <small>Monthly revenue growth</small>
                         
@@ -608,6 +638,7 @@ function Dashboard() {
                            
                         </div>
                         <div className="card-progress">
+                        <small>In Stock : {pig?.length}</small><br/>
                         <small>$653,200</small><br/>
                             <small>Monthly revenue growth</small>
                             
@@ -623,30 +654,33 @@ function Dashboard() {
 
                     <div className="card" style={{width:'110%'}}>
                         <div className="card-head">
-                            <h2>Manure</h2>
+                            <h2>Poultry</h2>
                             <GrassIcon sx={{fontSize:40, color:'#012949'}}/>
                           
                         </div>
                         <div className="card-progress">
+                        <small>In Stock : {poultry?.length}</small><br/>
                         <small>$653,200</small><br/>
                             <small>Monthly revenue growth</small>
                          
                         </div>
                     </div>
 
-                    <div className="card" style={{width:'110%'}}>
-                        <div className="card-head">
-                            <h2>Plantain</h2>
-                            <GrassIcon sx={{fontSize:40, color:'#012949'}}/>
+                   
 
-                      
-                        </div>
-                        <div className="card-progress">
-                        <small>$653,200</small><br/>
-                            <small>Monthly revenue growth</small>
-                           
-                        </div>
-                    </div>
+                    
+<div className="card" style={{width:'110%'}}>
+    <div className="card-head">
+        <h2>Cat Fish</h2>
+        <SetMealIcon sx={{fontSize:40, color:'#012949'}}/>
+    </div>
+    <div className="card-progress">
+    <small>In Stock : {catFish?.length}</small><br/>
+    <small>$653,200</small><br/>
+    <small>Monthly revenue growth</small>
+      
+    </div>
+</div>
 
 
 
@@ -658,6 +692,7 @@ function Dashboard() {
                             <EmojiNatureIcon sx={{fontSize:40, color:'#012949'}}/>
                         </div>
                         <div className="card-progress">
+                        <small>In Stock : 0</small><br/>
                         <small>$653,200</small><br/>
                         <small>Monthly revenue growth</small>
 
@@ -674,6 +709,7 @@ function Dashboard() {
                             <MonetizationOnIcon sx={{fontSize:40, color:'#012949'}}/>
                         </div>
                         <div className="card-progress">
+                          
                         <small>$653,200</small><br/>
                         <small>Monthly revenue growth</small>
                         </div>
@@ -689,18 +725,21 @@ function Dashboard() {
 
 
                 <div className="analytics">
+                <div className="card" style={{width:'110%'}}>
+                        <div className="card-head">
+                            <h2>Plantain</h2>
+                            <GrassIcon sx={{fontSize:40, color:'#012949'}}/>
 
-<div className="card" style={{width:'110%'}}>
-    <div className="card-head">
-        <h2>Cat Fish</h2>
-        <SetMealIcon sx={{fontSize:40, color:'#012949'}}/>
-    </div>
-    <div className="card-progress">
-    <small>$653,200</small><br/>
-    <small>Monthly revenue growth</small>
-      
-    </div>
-</div>
+                      
+                        </div>
+                        <div className="card-progress">
+                        <small>In Stock : 0</small><br/>
+                          
+                        <small>$653,200</small><br/>
+                            <small>Monthly revenue growth</small>
+                           
+                        </div>
+                    </div>
 
 
 
@@ -713,6 +752,7 @@ function Dashboard() {
         <EggIcon sx={{fontSize:40, color:'#012949'}}/>
     </div>
     <div className="card-progress">
+    <small>In Stock : 0</small><br/>
     <small>$653,200</small><br/>
     <small>Monthly revenue growth</small>
     </div>
@@ -726,6 +766,7 @@ function Dashboard() {
                       
                         </div>
                         <div className="card-progress">
+                        <small>In Stock : 0</small><br/>
                         <small>$653,200</small><br/>
                             <small>Monthly revenue growth</small>
                            
@@ -743,6 +784,7 @@ function Dashboard() {
                       
                         </div>
                         <div className="card-progress">
+                        <small>In Stock : 0</small><br/>
                         <small>$653,200</small><br/>
                             <small>Monthly revenue growth</small>
                            
@@ -770,6 +812,7 @@ function Dashboard() {
                       
                         </div>
                         <div className="card-progress">
+                        <small>In Stock : 0</small><br/>
                         <small>$653,200</small><br/>
                             <small>Monthly revenue growth</small>
                            

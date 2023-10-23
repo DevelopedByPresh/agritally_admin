@@ -82,3 +82,17 @@ export const  DELETE_CART ='DELETE_CART'
 
 // Carts END
 
+
+
+
+
+// Transactions START
+export const  CREATE_TRANSACTIONS ='CREATE_TRANSACTIONS '
+export const  GET_ALL_TRANSACTIONS ='GET_ALL_TRANSACTIONS '
+export const  UPDATE_TRANSACTION ='UPDATE_TRANSACTION '
+export const  DELETE_TRANSACTION ='DELETE_TRANSACTION '
+
+
+
+
+// Transactions END

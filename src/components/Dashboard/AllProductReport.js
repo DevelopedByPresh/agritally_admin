@@ -956,11 +956,11 @@ const PigColumns = [
      return {
         "Date Created":  newDate ,
         Section: report?.section,
-        Quantity: report?.quantity,
+        Quantity:  (<h5 style={{marginLeft:15}}>{report?.quantity} </h5>),
         'Created By': report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
         Price: '₦' + report?.price,
-        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
+        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
        
       
           Edit:   (
@@ -985,13 +985,13 @@ const PigColumns = [
 
      return {
         "Date Created":  newDate,
-        Section: report?.section,
-        Quantity: report?.quantity,
-        "Weight ": report?.weight + 'kg',
+        Section:(<h5 style={{marginLeft:5}}>{report?.section}</h5>),
+        Quantity: (<h5 style={{marginLeft:15}}>{report?.quantity}</h5>) ,
+        "Weight ": (<h5 style={{marginLeft:10}}>{report?.weight} Kg</h5>),
         'Created By':  report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
-        Price: '₦' + report?.price,
-        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
+        Price: (<h5 style={{marginLeft:3}}> ₦ {report?.price}</h5>),
+        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
        
        
 
@@ -1021,11 +1021,11 @@ const PigColumns = [
      return {
         "Date Created":  newDate,
         Size: report?.section,
-        Quantity: report?.quantity,
+        Quantity: (<h5 style={{marginLeft:15}}>{report?.quantity} </h5>),
         'Created By':  report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
         Price: '₦' + report?.price,
-        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
+        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red',  marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green',  marginLeft:2}}/>,
        
        
 
@@ -1054,12 +1054,12 @@ const PigColumns = [
      return {
         "Date Created":  newDate,
         Section: report?.section,
-        Quantity: report?.quantity,
-        "Weight ": report?.weight + 'kg',
+        Quantity: (<h5 style={{marginLeft:15}}>{report?.quantity} </h5>),
+        "Weight ": (<h5 style={{marginLeft:10}}>{report?.weight} Kg</h5>),
         'Created By':  report?.user?.firstName + ' ' + report?.user?.lastName,
         Status:report?.status,
         Price: '₦' + report?.price,
-        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
+        Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
        
     
           Edit:   (
@@ -1100,10 +1100,11 @@ const PigColumns = [
       <Container maxWidth="xl">
         <Toolbar disableGutters>
      
+        <Link to="/Dashboard" style={{color:'white'}}>
           <Typography
             variant="h6"
             noWrap
-            component="a"
+           // component="a"
       
             sx={{
               mr: 2,
@@ -1118,6 +1119,7 @@ const PigColumns = [
           >
             Agritally
           </Typography>
+          </Link>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -1389,7 +1391,7 @@ const PigColumns = [
  
 {report === 'pig' && pig?.length > 0 ?
 
-    <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
+    <div style={{width:1700, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
   title={ `Pig Report `}
   data={PigReportRows}
@@ -1411,13 +1413,13 @@ No Report on Pigs yet!
 
 {report === 'poultry' && poultry?.length > 0  ?
 
-    <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
+    <div style={{width:1700, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
   title={ `Poultry Report `}
   data={PoultryReportRows}
   columns={PoultryColumns}
   options={options}
-  sx={{alignItems:'center', textAlign:'center'}}
+ 
 
  
 
@@ -1441,7 +1443,7 @@ No Report on Poultry yet!
 
 {report === 'egg' && egg?.length > 0  ?
 
-    <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
+    <div style={{width:1700, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
   title={ 'Egg Report' }
   data={EggReportRows}
@@ -1459,7 +1461,7 @@ No Report on Poultry yet!
 
 {report === 'catFish' && catFish?.length > 0  ?
 
-    <div style={{width:1500, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
+    <div style={{width:1700, margin:'0 auto', alignItems:'center', textAlign:'center'}}>
 <MUIDataTable
   title={ `Cat Fish Report`}
   data={CatFishReportRows}
@@ -2893,7 +2895,7 @@ Edit Modal */}
         <br/>
         {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!

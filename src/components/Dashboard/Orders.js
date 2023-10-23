@@ -30,9 +30,10 @@ import InputLabel from '@mui/material/InputLabel';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import TextField from '@mui/material/TextField';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError, UpdateOrder,DeleteOrder,  ClearMessage,GetAllOrders} from "../../Actions/Actions"
+import { ClearError, UpdateOrder,DeleteOrder,  ClearMessage,GetAllOrders, CreateTransactions} from "../../Actions/Actions"
 
 
 
@@ -79,8 +80,10 @@ const [anchorElNav, setAnchorElNav] = useState(null);
 const [anchorElUser, setAnchorElUser] = useState(null);
 
 const [openEdit, setOpenEdit] = useState(false);
+const [createTransactions, setCreateTransaction] = useState(false);
 const [openDeleteOrder, setOpenDeleteOrder] = useState(false);
 const [singleOrder, setSingleOrder] = useState({})
+
 
 const dateOfEntry = singleOrder?.createdAt
 const FormattedDate = (new Date(dateOfEntry))?.toString();
@@ -90,6 +93,40 @@ const [order, setOrder] = useState({
 })
 
 const {status} = order
+
+
+const [transaction, setTransaction] = useState({
+  orderId:"",
+  total:'',
+  type:'',
+})
+
+const {orderId, total, type} = transaction
+
+const id = sessionStorage.getItem('TransactionId')
+
+transaction.orderId = id
+
+
+
+
+const handleChangeTransactions = (e)=>{
+  const {name, value} = e.target
+  setTransaction({...transaction, [name]:value})
+}
+
+
+
+const HandleCreateTransaction = (e)=>{
+  e.preventDefault()
+  const amount = total
+  const data = {orderId, amount, type}
+  dispatch(CreateTransactions(data))
+
+
+
+}
+
 
 
 const handleChange = (e)=>{
@@ -120,6 +157,18 @@ const Role= [
 ];
 
 
+
+
+const types= [
+  { label: 'Purchase' },
+  { label: 'Sale'  },
+  { label: 'Mortality'  },
+
+
+];
+
+
+
 const handleFocus = ()=>{
     if(error){
         dispatch(ClearError())
@@ -144,6 +193,27 @@ const handleFocus = ()=>{
      setOrder(order);
     
   };
+
+
+
+  const handleOpenTransactions = (order) => {
+      
+    setCreateTransaction(true);
+    sessionStorage.setItem('TransactionId', order?.id)
+   setOrder(order);
+   setTransaction(order)
+
+
+  
+};
+
+
+
+
+const handleCloseTransactions  = () => {
+  setCreateTransaction(false);
+  dispatch(ClearError())
+};
 
   const handleCloseEdit = () => {
     setOpenEdit(false);
@@ -203,11 +273,12 @@ const handleClickCloseDeleteOrder = () => {
       dispatch(ClearMessage())
       setOpenDeleteOrder(false);
       setOpenEdit(false);
+      setCreateTransaction(false);
      
     }
   
  
-  },3000)
+  },2000)
 
 
 
@@ -227,7 +298,7 @@ const handleClickCloseDeleteOrder = () => {
      label: "Quantity",
      options: {
       filter: true,
-      sort: false,
+      sort: true,
      }
     },
     {
@@ -235,7 +306,7 @@ const handleClickCloseDeleteOrder = () => {
      label: "Unit Price",
      options: {
       filter: true,
-      sort: false,
+      sort: true,
      }
     },
     {
@@ -243,7 +314,7 @@ const handleClickCloseDeleteOrder = () => {
       label: "Total",
       options: {
        filter: true,
-       sort: false,
+       sort: true,
       }
      },
 
@@ -253,7 +324,7 @@ const handleClickCloseDeleteOrder = () => {
       label: "Status",
       options: {
        filter: true,
-       sort: false,
+       sort: true,
       }
      },
 
@@ -261,7 +332,7 @@ const handleClickCloseDeleteOrder = () => {
       name: "Remark",
       label: "Remark",
       options: {
-       filter: true,
+       filter: false,
        sort: false,
       }
      },
@@ -272,7 +343,7 @@ const handleClickCloseDeleteOrder = () => {
       name: "Details",
       label: "Details",
       options: {
-       filter: true,
+       filter: false,
        sort: false,
       }
      },
@@ -282,19 +353,34 @@ const handleClickCloseDeleteOrder = () => {
         name: "Edit",
         label: "Edit",
         options: {
-         filter: true,
+         filter: false,
+         sort: false,
+        }
+       },
+       
+       {
+        name: "Create Transaction",
+        label: " Create Transaction",
+        options: {
+         filter: false,
          sort: false,
         }
        },
 
+
+
+         
        {
         name: "Delete",
         label: "Delete",
         options: {
-         filter: true,
+         filter: false,
          sort: false,
         }
        },
+
+
+
 
 
 
@@ -309,22 +395,28 @@ const handleClickCloseDeleteOrder = () => {
    orders?.map((order) => {
     var date = order?.createdAt,
     newDate = (new Date(date))?.toString();
-
+   
      return {
         "Date Of Entry":  newDate,
-        Quantity: order?.cartId?.cartItems?.[0]?.quantity,
-        'Unit Price':  '₦' + order?.cartId?.cartItems?.[0]?.price,
+        Quantity:  (<h5 style={{marginLeft:18}}>{order?.cartId?.cartItems?.[0]?.quantity} </h5>),
+        'Unit Price':   (<h5 style={{marginLeft:13}}>₦{order?.cartId?.cartItems?.[0]?.price} </h5>),
         'Total': ' ₦' + order?.cartId?.cartItems?.[0]?.subtotal,
-        Status: order?.status,
-        Remark:  order?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red'}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>,
+        Status:  order?.status,
+        Remark:  order?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', ml:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', ml:2}}/>,
        
 
           Details:   (
-            <VisibilityIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpen(order))}`} />
+            <VisibilityIcon  sx={{cursor:'pointer', color:'blue', ml:1}}  onClick={() => `${( handleClickOpen(order))}`} />
           ),
           Edit:   (
             <EditIcon  sx={{cursor:'pointer', color:'blue'}}  onClick={() => `${( handleClickOpenEdit(order))}`} />
           ),
+
+
+            'Create Transaction':   (
+            <EditIcon  sx={{cursor:'pointer', color:'blue', marginLeft:5}}  onClick={() => `${( handleOpenTransactions(order))}`} />
+          ),
+
 
           Delete:   (
             <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteOrder(order?.id))}`}  />
@@ -461,7 +553,7 @@ const handleClickCloseDeleteOrder = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open Profile">
+            <Tooltip >
               {/* <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="https://demos.creative-tim.com/argon-dashboard/assets-old/img/theme/team-4.jpg" />
               </IconButton> */}
@@ -557,11 +649,42 @@ const handleClickCloseDeleteOrder = () => {
         </div>
       
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
 
-           Order Status :  {singleOrder?.status}, Edit To Approve!          {singleOrder?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:10, marginTop:-0.5}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green'}}/>},
+
+        <DialogContentText id="alert-dialog-description">
+          Ordered By : {singleOrder?.cartId?.user?.firstName + " " + singleOrder?.cartId?.user?.lastName }
           </DialogContentText>
           <br/>
+
+          
+          {singleOrder?.status  === 'Pending' ?
+          <DialogContentText id="alert-dialog-description">
+
+           Order Status :  {singleOrder?.status}, Edit To Approve!    <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:5, marginTop:-0.5}}/>,
+          </DialogContentText>: ""}
+          
+
+
+          {singleOrder?.status  === 'Approved' ?
+          <DialogContentText id="alert-dialog-description">
+
+           Order Status :  This Order Has Been Approved!     <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:5, marginTop:-0.5}}/>
+          </DialogContentText>: ""}
+          <br/>
+
+
+          <DialogContentText id="alert-dialog-description">
+          Product Ordered : {singleOrder?.cartId?.cartItems?.[0]?.productId?.category}
+          </DialogContentText>
+          <br/>
+
+
+          <DialogContentText id="alert-dialog-description">
+          Product section : {singleOrder?.cartId?.cartItems?.[0]?.productId?.section}
+          </DialogContentText>
+          <br/>
+
+
 
           <DialogContentText id="alert-dialog-description">
           Date Of Entry : {`${FormattedDate}`}
@@ -807,7 +930,7 @@ const handleClickCloseDeleteOrder = () => {
 
 <div className="form-group focused" style={{marginRight:10}}>
 <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={handleClickCloseDeleteOrder}>
-            Delete
+            Cancel
           </button>  
                   
                  </div>
@@ -841,6 +964,166 @@ const handleClickCloseDeleteOrder = () => {
 {/* end of delete Modal */}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/* Create Transaction Modal */}
+
+    
+<div>
+      
+      <Dialog
+        open={createTransactions}
+        onClose={handleCloseTransactions}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        fullWidth
+        maxWidth="md"
+
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Create Transaction"}
+        </DialogTitle>
+
+
+
+
+        <form>
+        
+        <Box
+        sx={{
+       
+          p: 1,
+          m: 1,
+          mt:2,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+        }}
+      >
+
+
+{message && 
+
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
+<strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
+
+</div>
+</div>
+}
+
+{error &&
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'50%', margin:'0px auto'}}>
+<div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
+
+<strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
+
+
+
+
+</div>
+</div>  
+ }
+
+
+{loading && error === false ?
+          <div className='loader'></div> : ""}
+          <br/> 
+    
+          
+     
+
+<Box sx={{ display:'flex',  textAlign:'center',  alignItems:'center'}}>
+
+
+
+
+
+
+
+
+<Box sx={{ml:8}}>
+         <TextField
+          label="Amount (₦)"
+          id="outlined-start-adornment"
+          sx={{ width: 330,  }}
+          onChange={handleChangeTransactions}
+        //  name='total'
+          value={total}
+         
+          
+          
+        onFocus={handleFocus}
+        /> 
+
+       </Box>
+
+
+       
+  
+<FormControl sx={{  width: 320, marginLeft:10 , alignItems:'center' }}>
+                <InputLabel id="demo-multiple-name-label">Select Type...</InputLabel>
+                <Select
+                  sx={{ width: 330, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                  value={type}
+                  name="type"
+                  onFocus={handleFocus}
+                  fullWidth
+               
+                  input={<OutlinedInput label="Select Type..." />}
+                  onChange={handleChangeTransactions}
+                >
+                  {types.map((value, key) => (
+                    <MenuItem key={key} value={value.label}> 
+                      
+                      {value.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+
+
+
+        </Box>
+
+    </Box><br/>
+
+
+
+
+    </form>
+    <br/>
+        <DialogActions>
+        <div className="form-group focused" style={{marginRight:10}}>
+
+        <button type="submit" className="btn btn-success btn-block mb-4"  style={{backgroundColor:'#012949', }} onClick={HandleCreateTransaction} >
+            Create Transaction
+          </button> 
+                 </div>
+        </DialogActions>
+      </Dialog>
+    </div>
+
+{/* End of Create Transaction Modal */}
 
 
 

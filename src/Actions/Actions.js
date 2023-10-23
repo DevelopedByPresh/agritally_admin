@@ -73,6 +73,17 @@ export const CartDeleted = (data)=>({type:TYPES.DELETE_CART, payload:data});
 
 
 
+// EVERYTHING THAT HAS TO DO WITH TRANSACTION START
+export const TransactionCreated = (data)=>({type:TYPES.CREATE_TRANSACTIONS, payload:data});
+export const TransactionGotten = (data)=>({type:TYPES.GET_ALL_TRANSACTIONS, payload:data});
+export const TransactionUpdated = (data)=>({type:TYPES.UPDATE_TRANSACTION, payload:data});
+export const TransactionDeleted = (data)=>({type:TYPES.DELETE_TRANSACTION, payload:data});
+
+
+// EVERYTHING THAT HAS TO DO WITH TRANSACTION END
+
+
+
 
 
 // CLEAR ERROR, LOADING  AND  CLEAR MESSAGE
@@ -716,7 +727,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
   
   export const GetAllCart = () => (dispatch) => {
-    dispatch(isLoading());
+   // dispatch(isLoading());
     const AdminToken = sessionStorage.getItem('AdminToken');
 
     const authorization = {
@@ -781,3 +792,149 @@ export const CreateAdmin = (data) => (dispatch) => {
   
 
   
+
+
+
+
+    
+
+  // EVERYTHING THAT HAS TO DO WITH TRANSACTIONS START
+
+
+
+
+  export const CreateTransactions = (data) => (dispatch) => {
+     dispatch(isLoading());
+    const AdminToken = sessionStorage.getItem('AdminToken');
+
+    const authorization = {
+      "Content-Type": "application/json",
+       Authorization: ` Bearer ${AdminToken}`,
+    }
+
+   
+     axios.post(`http://localhost:5000/transaction/add`, data, { headers: authorization })
+       .then((response) => {
+         dispatch(TransactionCreated(response?.data?.message));
+    
+    
+     
+   
+       })
+       .catch((error) => {
+         dispatch(Error(error?.response?.data?.message))
+         console.log(error?.response)
+    
+  
+   
+         
+       });
+   };
+  
+
+
+
+
+   export const GetAllTransactions = () => (dispatch) => {
+   // dispatch(isLoading());
+   const AdminToken = sessionStorage.getItem('AdminToken');
+
+
+   const authorization = {
+     "Content-Type": "application/json",
+      Authorization: ` Bearer ${AdminToken}`,
+   }
+
+  
+    axios.get(`http://localhost:5000/transaction/getAll`,  { headers: authorization })
+      .then((response) => {
+        dispatch(TransactionGotten(response?.data?.data));
+     
+   
+    
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+      
+ 
+  
+        
+      });
+  };
+ 
+
+  
+  export const UpdateTransaction = (data) => (dispatch) => {
+    dispatch(isLoading());
+   const AdminToken = sessionStorage.getItem('AdminToken');
+  const  id= sessionStorage.getItem('TransactionUpdateId')
+
+   const authorization = {
+     "Content-Type": "application/json",
+      Authorization: ` Bearer ${AdminToken}`,
+   }
+
+  
+    axios.patch(`http://localhost:5000/transaction/update/${id}`,data,  { headers: authorization })
+      .then((response) => {
+        dispatch(TransactionUpdated(response?.data?.message));
+        dispatch(GetAllTransactions());
+    
+   
+    
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+     
+ 
+  
+        
+      });
+  };
+ 
+  
+
+
+
+  export const DeleteTransaction = () => (dispatch) => {
+    dispatch(isLoading());
+   const AdminToken = sessionStorage.getItem('AdminToken');
+  const  id= sessionStorage.getItem('TransactionId')
+
+   const authorization = {
+     "Content-Type": "application/json",
+      Authorization: ` Bearer ${AdminToken}`,
+   }
+
+  
+    axios.delete(`http://localhost:5000/transaction/delete/${id}`,  { headers: authorization })
+      .then((response) => {
+        dispatch(TransactionDeleted(response?.data?.message));
+        dispatch(GetAllTransactions());
+
+   
+    
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.error))
+   
+ 
+  
+        
+      });
+  };
+ 
+
+
+
+
+
+
+ 
+
+
+  // EVERYTHING THAT HAS TO DO WITH TRANSACTIONS END
+
