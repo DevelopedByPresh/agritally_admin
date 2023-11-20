@@ -83,7 +83,7 @@ const handleSubmit = (e) => {
 
  
 
-  console.log(user)
+
 };
 
 

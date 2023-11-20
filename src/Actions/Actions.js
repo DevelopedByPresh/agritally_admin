@@ -42,6 +42,7 @@ export const ProfileUpdated = (data)=>({type:TYPES.UPDATE_PROFILE,payload:data})
 // GETTING ALL PRODUCTS AND STAFF START
 
 export const PoultryProducts = (data)=>({type:TYPES.GET_POULTRY_PRODUCTS,payload:data});
+export const AllProducts= (data)=>({type:TYPES.GET_ALL_PRODUCTS,payload:data});
 export const AllStaff = (data)=>({type:TYPES.GET_ALL_STAFF,payload:data});
 export const AllAdmin = (data)=>({type:TYPES.GET_ALL_ADMINS,payload:data});
 export const PigProducts = (data)=>({type:TYPES.GET_PIG_PRODUCTS, payload:data});
@@ -86,6 +87,40 @@ export const TransactionDeleted = (data)=>({type:TYPES.DELETE_TRANSACTION, paylo
 
 
 
+
+
+
+
+
+// EVERYTHING THAT HAS TO DO WITH EGG RECORD START
+export const EggRecord = (data)=>({type:TYPES.CREATE_EGG_RECORD, payload:data});
+export const EggRecordGotten = (data)=>({type:TYPES.GET_EGG_RECORD, payload:data});
+export const EggRecordUpdated = (data)=>({type:TYPES.UPDATE_EGG_RECORD, payload:data});
+export const EggRecordDeleted = (data)=>({type:TYPES.DELETE_EGG_RECORD, payload:data});
+export const EggStatGotten = (data)=>({type:TYPES.GET_EGG_STATISTICS, payload:data});
+
+
+
+// EVERYTHING THAT HAS TO DO WITH EGG RECORD END
+
+
+
+
+// EVERYTHING THAT HAS TO DO WITH EGG RECORD START
+export const PigRecord = (data)=>({type:TYPES.CREATE_PIG_RECORD, payload:data});
+export const PigRecordGotten = (data)=>({type:TYPES.GET_PIG_RECORD, payload:data});
+export const PigRecordUpdated = (data)=>({type:TYPES.UPDATE_PIG_RECORD, payload:data});
+export const PigRecordDeleted = (data)=>({type:TYPES.DELETE_PIG_RECORD, payload:data});
+
+
+
+
+// EVERYTHING THAT HAS TO DO WITH EGG RECORD END
+
+
+
+
+
 // CLEAR ERROR, LOADING  AND  CLEAR MESSAGE
 
 export const isLoading = () => ({ type: TYPES.LOADING });
@@ -112,11 +147,12 @@ export const CreateAdmin = (data) => (dispatch) => {
     dispatch(isLoading());
     axios.post(`http://localhost:5000/admin/register`, data,)
       .then((response) => {
-        dispatch(AdminCreated(response?.data?.message));
+        dispatch(AdminCreated(response?.data?.data?.message));
+     
  
       })
       .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
+        dispatch(Error(error?.response?.data?.message))
         
       });
   };
@@ -126,9 +162,10 @@ export const CreateAdmin = (data) => (dispatch) => {
     dispatch(isLoading());
     axios.post(`http://localhost:5000/admin/login`, data,)
       .then((response) => {
-        dispatch(LoggedIn(response?.data?.message));
+        dispatch(LoggedIn(response?.data?.data?.message));
         sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
-        sessionStorage.setItem('AdminToken', response?.data?.token)
+        sessionStorage.setItem('AdminToken', response?.data?.data?.accessToken)
+    
    
 
   
@@ -165,6 +202,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     axios.get(`http://localhost:5000/product/getAll/?category=Poultry`,  { headers: authorization })
       .then((response) => {
         dispatch(PoultryProducts(response?.data?.data));
+   
    
      
       
@@ -266,6 +304,35 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
 
+  export const GetAllProducts = () => (dispatch) => {
+    // dispatch(isLoading());
+     const AdminToken = sessionStorage.getItem('AdminToken');
+ 
+     const authorization = {
+       "Content-Type": "application/json",
+        Authorization: `Bearer ${AdminToken}`,
+     };
+   
+     axios.get(`http://localhost:5000/product/getAll`, { headers: authorization })
+       .then((response) => {
+         dispatch(AllProducts(response?.data?.data));
+       
+    
+     
+      
+   
+       })
+       .catch((error) => {
+         dispatch(Error(error?.response?.data?.error))
+     
+ 
+         
+       });
+   };
+ 
+
+
+
 
 
 
@@ -281,9 +348,10 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: `Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/admin/users/getAll`, { headers: authorization })
+    axios.get(`http://localhost:5000/user/getAll`, { headers: authorization })
       .then((response) => {
         dispatch(AllStaff(response?.data?.data));
+      
    
     
      
@@ -291,6 +359,7 @@ export const CreateAdmin = (data) => (dispatch) => {
       })
       .catch((error) => {
         dispatch(Error(error?.response?.data?.error))
+    
 
         
       });
@@ -384,19 +453,21 @@ export const CreateAdmin = (data) => (dispatch) => {
       .then((response) => {
         dispatch(ProductDeleted(response?.data?.message));
 
-        
-        dispatch(GetPoultryProduct());
-        dispatch(GetPigProduct());
-        dispatch(GetEggProduct());
-        dispatch(GetEggProduct());
-        dispatch(GetCatFishProduct());
-       
+
+      dispatch(GetPoultryProduct());
+      dispatch(GetPigProduct());
+      dispatch(GetEggProduct());
+      dispatch(GetCatFishProduct());
+
+
+      dispatch(GetAllProducts());
     
       //  sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
   
       })
       .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
+        dispatch(Error(error?.response?.data?.message))
+   
 
         
       });
@@ -424,12 +495,13 @@ export const CreateAdmin = (data) => (dispatch) => {
       .then((response) => {
         dispatch(StaffDeleted(response?.data?.message));
         dispatch(GetAllStaff());
+      
  
 
   
       })
       .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
+        dispatch(Error(error?.response?.data?.message))
       
         
       });
@@ -462,7 +534,8 @@ export const CreateAdmin = (data) => (dispatch) => {
   
       })
       .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
+        dispatch(Error(error?.response?.data?.message))
+       
       
         
       });
@@ -500,8 +573,8 @@ export const CreateAdmin = (data) => (dispatch) => {
       .then((response) => {
         dispatch(ProductUpdated(response?.data?.message));
         dispatch(GetPoultryProduct());
+        
         dispatch(GetPigProduct());
-        dispatch(GetEggProduct());
         dispatch(GetEggProduct());
         dispatch(GetCatFishProduct());
   
@@ -530,7 +603,7 @@ export const CreateAdmin = (data) => (dispatch) => {
   
 
 
-  //  dispatch(isLoading());
+    dispatch(isLoading());
     axios.patch(`http://localhost:5000/user//update-profile/${id}`, staff,  {headers:authorization})
       .then((response) => {
         dispatch(StaffUpdated(response?.data?.message));
@@ -563,7 +636,7 @@ export const CreateAdmin = (data) => (dispatch) => {
   
 
 
-   // dispatch(isLoading());
+    dispatch(isLoading());
     axios.patch(`http://localhost:5000/admin/update-profile/${id}`, staff,  {headers:authorization})
       .then((response) => {
         dispatch(AdminUpdated(response?.data?.message));
@@ -823,7 +896,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        })
        .catch((error) => {
          dispatch(Error(error?.response?.data?.message))
-         console.log(error?.response)
+     
     
   
    
@@ -938,3 +1011,366 @@ export const CreateAdmin = (data) => (dispatch) => {
 
   // EVERYTHING THAT HAS TO DO WITH TRANSACTIONS END
 
+
+
+
+
+
+
+
+
+
+
+  // EVERYTHING THAT HAS TO DO WITH EGG RECORD START
+
+
+
+  export const CreateEggRecord = (data) => (dispatch) => {
+    dispatch(isLoading());
+   const AdminToken = sessionStorage.getItem('AdminToken');
+
+   const authorization = {
+     "Content-Type": "application/json",
+      Authorization: ` Bearer ${AdminToken}`,
+   }
+
+  
+    axios.post(`http://localhost:5000/egg/`, data, { headers: authorization })
+      .then((response) => {
+        dispatch(EggRecord(response?.data?.message));
+        dispatch(GetEggRecord());
+   
+   
+   
+    
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.message))
+    
+   
+ 
+  
+        
+      });
+  };
+ 
+
+
+
+
+  export const GetEggRecord = () => (dispatch) => {
+  // dispatch(isLoading());
+  const AdminToken = sessionStorage.getItem('AdminToken');
+
+
+  const authorization = {
+    "Content-Type": "application/json",
+     Authorization: ` Bearer ${AdminToken}`,
+  }
+
+ 
+   axios.get(`http://localhost:5000/egg`,  { headers: authorization })
+     .then((response) => {
+       dispatch(EggRecordGotten(response?.data?.data));
+     
+    
+  
+   
+ 
+     })
+     .catch((error) => {
+       dispatch(Error(error?.response?.data?.error))
+     
+
+ 
+       
+     });
+ };
+
+
+
+
+
+
+
+
+
+ export const UpdateEggRecord = (data) => (dispatch) => {
+  dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('EggUpdateId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.patch(`http://localhost:5000/egg/${id}`,data,  { headers: authorization })
+    .then((response) => {
+      dispatch(EggRecordUpdated(response?.data?.message));
+      dispatch(GetEggRecord());
+     
+  
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.error))
+   
+
+
+      
+    });
+};
+
+
+
+
+
+export const DeleteEggRecord = () => (dispatch) => {
+ // dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('EggId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.delete(`http://localhost:5000/egg/${id}`,  { headers: authorization })
+    .then((response) => {
+      dispatch(EggRecordDeleted(response?.data?.message));
+      dispatch(GetEggRecord());
+   
+
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.error))
+ 
+ 
+
+
+      
+    });
+};
+
+
+
+export const GetEggStat = () => (dispatch) => {
+  // dispatch(isLoading());
+  const AdminToken = sessionStorage.getItem('AdminToken');
+
+
+  const authorization = {
+    "Content-Type": "application/json",
+     Authorization: ` Bearer ${AdminToken}`,
+  }
+
+ 
+   axios.get(`http://localhost:5000/egg/statistics`,  { headers: authorization })
+     .then((response) => {
+       dispatch(EggStatGotten(response?.data?.data));
+    
+     
+    
+  
+   
+ 
+     })
+     .catch((error) => {
+       dispatch(Error(error?.response?.data?.error))
+     
+
+ 
+       
+     });
+ };
+
+
+
+
+
+  // EVERYTHING THAT HAS TO DO WITH EGG RECORD END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  // EVERYTHING THAT HAS TO DO WITH PIG RECORD START
+
+
+
+  export const CreatePigRecord = (data) => (dispatch) => {
+    dispatch(isLoading());
+   const AdminToken = sessionStorage.getItem('AdminToken');
+
+   const authorization = {
+     "Content-Type": "application/json",
+      Authorization: ` Bearer ${AdminToken}`,
+   }
+
+  
+    axios.post(`http://localhost:5000/pig/`, data, { headers: authorization })
+      .then((response) => {
+        dispatch(PigRecord(response?.data?.message));
+        dispatch(GetPigRecord());
+   
+   
+   
+    
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.message))
+    
+   
+ 
+  
+        
+      });
+  };
+ 
+
+
+
+
+  export const GetPigRecord = () => (dispatch) => {
+  // dispatch(isLoading());
+  const AdminToken = sessionStorage.getItem('AdminToken');
+
+
+  const authorization = {
+    "Content-Type": "application/json",
+     Authorization: ` Bearer ${AdminToken}`,
+  }
+
+ 
+   axios.get(`http://localhost:5000/pig`,  { headers: authorization })
+     .then((response) => {
+       dispatch(PigRecordGotten(response?.data?.data));
+     
+    
+  
+   
+ 
+     })
+     .catch((error) => {
+       dispatch(Error(error?.response?.data?.error))
+     
+
+ 
+       
+     });
+ };
+
+
+
+
+
+
+
+
+
+ export const UpdatePigRecord = (data) => (dispatch) => {
+  dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('PigUpdateId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.patch(`http://localhost:5000/pig/${id}`,data,  { headers: authorization })
+    .then((response) => {
+      dispatch(PigRecordUpdated(response?.data?.message));
+      dispatch(GetPigRecord());
+     
+  
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.error))
+   
+
+
+      
+    });
+};
+
+
+
+
+
+export const DeletePigRecord = () => (dispatch) => {
+ // dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('PigId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.delete(`http://localhost:5000/pig/${id}`,  { headers: authorization })
+    .then((response) => {
+      dispatch(PigRecordDeleted(response?.data?.message));
+      dispatch(GetPigRecord());
+   
+
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.error))
+ 
+ 
+
+
+      
+    });
+};
+
+
+
+
+
+
+
+
+
+  // EVERYTHING THAT HAS TO DO WITH PIG RECORD END

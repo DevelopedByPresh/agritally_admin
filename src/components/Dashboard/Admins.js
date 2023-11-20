@@ -20,7 +20,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FormControl, { useFormControl } from '@mui/material/FormControl';
@@ -29,7 +29,8 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError, GetAllAdmins, DeleteAdmin, UpdateAdmin,  ClearMessage} from "../../Actions/Actions"
+import { ClearError, GetAllAdmins, DeleteAdmin, UpdateAdmin,  ClearMessage, LoggedOut} from "../../Actions/Actions"
+import { jwtDecode } from "jwt-decode"
 
 
 
@@ -37,6 +38,9 @@ import { ClearError, GetAllAdmins, DeleteAdmin, UpdateAdmin,  ClearMessage} from
 
 
  const Admins=()=> {
+  const navigate = useNavigate();
+  const token = sessionStorage.getItem('AdminToken')
+  const dispatch = useDispatch()
 
 
   useEffect(()=>{
@@ -46,13 +50,63 @@ import { ClearError, GetAllAdmins, DeleteAdmin, UpdateAdmin,  ClearMessage} from
 
   const UserInfo = JSON.parse(sessionStorage.getItem('Admin'))
 
+
+
+
+
+  useEffect(() => {
+    let timerRef = null;
   
-  const dispatch = useDispatch()
+    const decoded = jwtDecode(token);
+  
+    const expiryTime = (new Date(decoded.exp * 1000)).getTime();
+    const currentTime = (new Date()).getTime();
+  
+    const timeout = expiryTime - currentTime;
+    const onExpire = () => {
+      dispatch(LoggedOut());
+       navigate('/');
+    };
+  
+    if (timeout > 0) {
+      // token not expired, set future timeout to log out and redirect
+      timerRef = setTimeout(onExpire, timeout);
+    } else {
+      // token expired, log out and redirect
+      onExpire();
+    }
+  
+    // Clear any running timers on component unmount or token state change
+    return () => {
+      clearTimeout(timerRef);
+    };
+  }, [dispatch, navigate, token]);
+  
+
+
+
+
+
+
+
+
+  const [tableBodyHeight, setTableBodyHeight] = useState("400px");
+
+const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
+const [searchBtn, setSearchBtn] = useState(true);
+const [downloadBtn, setDownloadBtn] = useState(true);
+const [printBtn, setPrintBtn] = useState(true);
+const [viewColumnBtn, setViewColumnBtn] = useState(true);
+const [filterBtn, setFilterBtn] = useState(true);
+
+  
+ 
       
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
   const loading = useSelector((state)=>state?.Admin?.loading)
   const AllAdmin = useSelector((state)=>state?.Admin?.Admins)
+
 
 
   
@@ -128,8 +182,9 @@ useEffect(()=>{
 
     const handleClickOpenEdit = (user) => {
       setOpenEdit(true);
-      sessionStorage.setItem('AdminUpdateId', user?._id)
+      sessionStorage.setItem('AdminUpdateId', user?.id)
      setUser({...user});
+  
     
   };
 
@@ -140,9 +195,10 @@ useEffect(()=>{
 
 
 
-  const handleClickOpenDeleteUser = (id) => {
+  const handleClickOpenDeleteUser = (id, user) => {
     setOpenDeleteUser(true);
     sessionStorage.setItem('AdminId', id)
+
   
 };
 
@@ -286,11 +342,13 @@ const handleClickCloseDeleteUser = () => {
    const data =
    AllAdmin &&
    AllAdmin?.map((user) => {
+    var date = user?.date_of_birth
+    var newDate = date?.toString()
 
      return {
-        "First Name": user?.firstName,
+        "First Name":  (<h5 style={{marginLeft:25}}>{user?.firstName} </h5>),
         "Last Name": user?.lastName,
-        'Date Of Birth':user?.date_of_birth,
+        'Date Of Birth':newDate,
         'Email Address': user?.email,
         'Phone Number':user?.phone,
         'Admin Role':user?.role,
@@ -299,7 +357,7 @@ const handleClickCloseDeleteUser = () => {
         ),
 
         Delete:   (
-          <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteUser(user?._id))}`}  />
+          <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteUser(user?.id, user))}`}  />
         ),
 
   
@@ -316,8 +374,19 @@ const handleClickCloseDeleteUser = () => {
 
    
    const options = {
-     filterType: 'checkbox',
-   };
+    filterType: 'checkbox',
+
+    search: searchBtn,
+    download: downloadBtn,
+    print: printBtn,
+    viewColumns: viewColumnBtn,
+    filter: filterBtn,
+    filterType: "dropdown",
+  
+    tableBodyHeight,
+    tableBodyMaxHeight,
+  };
+
 
 
 
@@ -336,7 +405,7 @@ const handleClickCloseDeleteUser = () => {
           <Typography
             variant="h6"
             noWrap
-            component="a"
+          //  component="a"
       
             sx={{
               mr: 2,
@@ -466,8 +535,22 @@ const handleClickCloseDeleteUser = () => {
 
 
 
+    {AllAdmin?.length > 0 ?
 
 
+<div style={{width:1800, marginLeft:80}}>
+<MUIDataTable
+  title={ `Number of Admin : ${data?.length}`}
+  data={data}
+  columns={columns}
+  options={options}
+/>
+
+</div> :
+
+<Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+     No Existing Admin At the Moment! 
+   </Typography>}
 
 
 
@@ -476,19 +559,7 @@ const handleClickCloseDeleteUser = () => {
 
 
 
-
-    <div style={{width:1800, marginLeft:80}}>
-<MUIDataTable
-  title={ `Number of Admin : ${AllAdmin?.length}`}
-  data={data}
-  columns={columns}
-  options={options}
  
-
-/>
-
-
-</div>
 
 
 

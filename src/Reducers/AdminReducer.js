@@ -18,7 +18,10 @@ const initialState = {
     orders:[],
     cart:[],
     Admins:[],
-    transactions:[]
+    transactions:[],
+    EggRecord:[],
+    PigRecord:[],
+    EggStat:[]
 }
 
 
@@ -438,6 +441,132 @@ const AdminReducer = (state=initialState, action) =>{
         
         
                                     // EVERYTHING THAT HAS TO DO WITH TRANSACTIONS END
+
+
+                                    
+                                    // EVERYTHING THAT HAS TO DO WITH EGG RECORD START
+
+
+                                    case TYPES.CREATE_EGG_RECORD:
+                                      return{
+                                        ...state,
+                                        loading:false,
+                                        error:false,
+                                        message:action.payload
+                                      }
+
+
+
+                                      case TYPES.GET_EGG_RECORD:
+                                        return{
+                                          ...state,
+                                          loading:false,
+                                          error:false,
+                                          EggRecord:action.payload
+                                        }
+
+
+
+                                          
+                                        case TYPES.UPDATE_EGG_RECORD:
+                                          return {
+                                            ...state,
+                                            error: false,
+                                            loading: false,
+                                            message:action.payload
+                                           
+                                          };
+        
+                                          
+                                          case TYPES.DELETE_EGG_RECORD:
+                                            return {
+                                              ...state,
+                                              error: false,
+                                              loading: false,
+                                              message:action.payload
+                                             
+                                            };
+
+
+                                                  
+                                          case TYPES.GET_EGG_STATISTICS:
+                                            return {
+                                              ...state,
+                                              error: false,
+                                              loading: false,
+                                              EggStat:action.payload
+                                             
+                                            };
+
+
+
+                                    // EVERYTHING THAT HAS TO DO WITH EGG RECORD END
+
+
+
+
+
+
+
+                                     // EVERYTHING THAT HAS TO DO WITH Pig RECORD START
+
+
+                                     case TYPES.CREATE_PIG_RECORD:
+                                      return{
+                                        ...state,
+                                        loading:false,
+                                        error:false,
+                                        message:action.payload
+                                      }
+
+
+
+                                      case TYPES.GET_PIG_RECORD:
+                                        return{
+                                          ...state,
+                                          loading:false,
+                                          error:false,
+                                          PigRecord:action.payload
+                                        }
+
+
+
+                                          
+                                        case TYPES.UPDATE_PIG_RECORD:
+                                          return {
+                                            ...state,
+                                            error: false,
+                                            loading: false,
+                                            message:action.payload
+                                           
+                                          };
+        
+                                          
+                                          case TYPES.DELETE_PIG_RECORD:
+                                            return {
+                                              ...state,
+                                              error: false,
+                                              loading: false,
+                                              message:action.payload
+                                             
+                                            };
+
+
+                                                  
+  
+  
+                                    // EVERYTHING THAT HAS TO DO WITH Pig RECORD END
+
+
+
+
+
+
+
+
+
+
+                                  
     
   
 

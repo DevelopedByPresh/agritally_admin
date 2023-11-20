@@ -20,7 +20,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FormControl, { useFormControl } from '@mui/material/FormControl';
@@ -29,7 +29,8 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from "../../Actions/Actions"
+import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage, LoggedOut} from "../../Actions/Actions"
+import { jwtDecode } from "jwt-decode"
 
 
 
@@ -37,6 +38,9 @@ import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from 
 
 
  const Users=()=> {
+    const navigate = useNavigate();
+  const token = sessionStorage.getItem('AdminToken')
+  const dispatch = useDispatch()
 
 
   useEffect(()=>{
@@ -46,8 +50,41 @@ import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from 
 
   const UserInfo = JSON.parse(sessionStorage.getItem('Admin'))
 
+
+
+
+
+  useEffect(() => {
+    let timerRef = null;
   
-  const dispatch = useDispatch()
+    const decoded = jwtDecode(token);
+  
+    const expiryTime = (new Date(decoded.exp * 1000)).getTime();
+    const currentTime = (new Date()).getTime();
+  
+    const timeout = expiryTime - currentTime;
+    const onExpire = () => {
+      dispatch(LoggedOut());
+       navigate('/');
+    };
+  
+    if (timeout > 0) {
+      // token not expired, set future timeout to log out and redirect
+      timerRef = setTimeout(onExpire, timeout);
+    } else {
+      // token expired, log out and redirect
+      onExpire();
+    }
+  
+    // Clear any running timers on component unmount or token state change
+    return () => {
+      clearTimeout(timerRef);
+    };
+  }, [dispatch, navigate, token]);
+  
+
+  
+
       
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
@@ -60,6 +97,15 @@ import { ClearError, GetAllStaff, DeleteStaff, UpdateStaff,  ClearMessage} from 
 const pages = ['About Us', 'Contact Us'];
 const settings = [ 'Logout', 'Reset Password','Profile', 'Dashboard',];
 const [open, setOpen] = useState(false);
+
+const [tableBodyHeight, setTableBodyHeight] = useState("400px");
+
+const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
+const [searchBtn, setSearchBtn] = useState(true);
+const [downloadBtn, setDownloadBtn] = useState(true);
+const [printBtn, setPrintBtn] = useState(true);
+const [viewColumnBtn, setViewColumnBtn] = useState(true);
+const [filterBtn, setFilterBtn] = useState(true);
 
   
 const [anchorElNav, setAnchorElNav] = useState(null);
@@ -128,7 +174,7 @@ useEffect(()=>{
 
     const handleClickOpenEdit = (user) => {
       setOpenEdit(true);
-      sessionStorage.setItem('UserUpdateId', user?._id)
+      sessionStorage.setItem('UserUpdateId', user?.id)
      setUser({...user});
     
   };
@@ -299,7 +345,7 @@ const handleClickCloseDeleteUser = () => {
         ),
 
         Delete:   (
-          <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteUser(user?._id))}`}  />
+          <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteUser(user?.id))}`}  />
         ),
 
   
@@ -316,9 +362,18 @@ const handleClickCloseDeleteUser = () => {
 
    
    const options = {
-     filterType: 'checkbox',
-   };
+    filterType: 'checkbox',
 
+    search: searchBtn,
+    download: downloadBtn,
+    print: printBtn,
+    viewColumns: viewColumnBtn,
+    filter: filterBtn,
+    filterType: "dropdown",
+  
+    tableBodyHeight,
+    tableBodyMaxHeight,
+  };
 
 
 
@@ -393,7 +448,7 @@ const handleClickCloseDeleteUser = () => {
           <Typography
             variant="h5"
             noWrap
-            component="a"
+          //  component="a"
             href="#"
             sx={{
               mr: 2,

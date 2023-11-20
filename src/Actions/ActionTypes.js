@@ -19,7 +19,7 @@ export const ADD_PRODUCTS = 'ADD_PRODUCTS';
 
 
 // GETTING START
-
+export const GET_ALL_PRODUCTS = 'GET_ALL_PRODUCTS';
 export const GET_POULTRY_PRODUCTS = 'GET_POULTRY_PRODUCTS';
 export const GET_PIG_PRODUCTS = 'GET_PIG_PRODUCTS';
 export const GET_ALL_STAFF= 'GET_ALL_STAFF';
@@ -96,3 +96,37 @@ export const  DELETE_TRANSACTION ='DELETE_TRANSACTION '
 
 
 // Transactions END
+
+
+
+
+
+// Egg Record Start
+export const CREATE_EGG_RECORD = 'CREATE_EGG_RECORD'
+export const GET_EGG_RECORD =    'GET_EGG_RECORD'
+export const UPDATE_EGG_RECORD = 'UPDATE_EGG_RECORD'
+export const DELETE_EGG_RECORD = 'DELETE_EGG_RECORD'
+export const GET_EGG_STATISTICS = 'GET_EGG_STATISTICS'
+
+
+
+
+
+
+// Egg Record End
+
+
+
+// Pig Record Start
+export const CREATE_PIG_RECORD = 'CREATE_PIG_RECORD'
+export const GET_PIG_RECORD =    'GET_PIG_RECORD'
+export const UPDATE_PIG_RECORD = 'UPDATE_PIG_RECORD'
+export const DELETE_PIG_RECORD = 'DELETE_PIG_RECORD'
+
+
+
+
+
+
+
+// Pig Record End

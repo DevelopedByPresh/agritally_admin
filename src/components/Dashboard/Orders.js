@@ -20,7 +20,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FormControl, { useFormControl } from '@mui/material/FormControl';
@@ -33,7 +33,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import TextField from '@mui/material/TextField';
 
 import {useSelector, useDispatch} from 'react-redux'
-import { ClearError, UpdateOrder,DeleteOrder,  ClearMessage,GetAllOrders, CreateTransactions} from "../../Actions/Actions"
+import { ClearError, UpdateOrder,DeleteOrder,  ClearMessage,GetAllOrders, CreateTransactions, LoggedOut} from "../../Actions/Actions"
+import { jwtDecode } from "jwt-decode"
 
 
 
@@ -41,7 +42,9 @@ import { ClearError, UpdateOrder,DeleteOrder,  ClearMessage,GetAllOrders, Create
 
 
  const Orders=()=> {
-    const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const token = sessionStorage.getItem('AdminToken')
+  const dispatch = useDispatch()
 
   useEffect(()=>{
     document.body.style.zoom = "70%";
@@ -51,6 +54,44 @@ import { ClearError, UpdateOrder,DeleteOrder,  ClearMessage,GetAllOrders, Create
   },[])
 
   const UserInfo = JSON.parse(sessionStorage.getItem('Admin'))
+
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    let timerRef = null;
+  
+    const decoded = jwtDecode(token);
+  
+    const expiryTime = (new Date(decoded.exp * 1000)).getTime();
+    const currentTime = (new Date()).getTime();
+  
+    const timeout = expiryTime - currentTime;
+    const onExpire = () => {
+      dispatch(LoggedOut());
+       navigate('/');
+    };
+  
+    if (timeout > 0) {
+      // token not expired, set future timeout to log out and redirect
+      timerRef = setTimeout(onExpire, timeout);
+    } else {
+      // token expired, log out and redirect
+      onExpire();
+    }
+  
+    // Clear any running timers on component unmount or token state change
+    return () => {
+      clearTimeout(timerRef);
+    };
+  }, [dispatch, navigate, token]);
+  
+
 
   
 

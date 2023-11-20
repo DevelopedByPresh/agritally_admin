@@ -22,7 +22,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Card from '@mui/material/Card';
@@ -38,6 +38,7 @@ import { styled } from '@mui/material/styles';
 
 
 
+
 import CardContent from '@mui/material/CardContent';
 import {useSelector, useDispatch} from 'react-redux'
 import {
@@ -49,11 +50,13 @@ import {
      GetEggProduct,
      GetCatFishProduct,
      UpdateProduct,
-     DeleteProduct
+     DeleteProduct,
+     LoggedOut
    
     
     } 
 from "../../Actions/Actions"
+import { jwtDecode } from "jwt-decode"
 
 
 
@@ -62,10 +65,13 @@ from "../../Actions/Actions"
 
 
  const AllProductReport=()=> {
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const token = sessionStorage.getItem('AdminToken')
 
 
     useEffect(()=>{
-        document.body.style.zoom = "65%";
+       // document.body.style.zoom = "65%";
         dispatch(ClearError())
         dispatch(GetPigProduct())
         dispatch(GetPoultryProduct())
@@ -74,16 +80,38 @@ from "../../Actions/Actions"
       
       },[])
 
+
+      useEffect(() => {
+        let timerRef = null;
+      
+        const decoded = jwtDecode(token);
+      
+        const expiryTime = (new Date(decoded.exp * 1000)).getTime();
+        const currentTime = (new Date()).getTime();
+      
+        const timeout = expiryTime - currentTime;
+        const onExpire = () => {
+          dispatch(LoggedOut());
+           navigate('/');
+        };
+      
+        if (timeout > 0) {
+          // token not expired, set future timeout to log out and redirect
+          timerRef = setTimeout(onExpire, timeout);
+        } else {
+          // token expired, log out and redirect
+          onExpire();
+        }
+      
+        // Clear any running timers on component unmount or token state change
+        return () => {
+          clearTimeout(timerRef);
+        };
+      }, [dispatch, navigate, token]);
+      
+
   
 
-
-
-
-
-
-
-    const dispatch = useDispatch()
-      
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
   const loading = useSelector((state)=>state?.Admin?.loading)
@@ -91,6 +119,8 @@ from "../../Actions/Actions"
   const pig = useSelector((state)=>state?.Admin?.pigProduct)
   const egg = useSelector((state)=>state?.Admin?.eggProduct)
   const catFish = useSelector((state)=>state?.Admin?.catFishProduct)
+
+
 
 
 
@@ -110,6 +140,7 @@ const [downloadBtn, setDownloadBtn] = useState(true);
 const [printBtn, setPrintBtn] = useState(true);
 const [viewColumnBtn, setViewColumnBtn] = useState(true);
 const [filterBtn, setFilterBtn] = useState(true);
+
 
 const none = 0
 
@@ -185,6 +216,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     },
   }));
 
+
+
+
   const handleChange = (e)=>{
     const {name, value} = e.target
     setProducts({...products, [name]:value})
@@ -251,9 +285,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
       dispatch(ClearError());
     }
   
-    if(message){
-      dispatch(ClearMessage())
-    }
+    // if(message){
+    //   dispatch(ClearMessage())
+    // }
   
    
   };
@@ -470,24 +504,23 @@ setTimeout(()=>{
     if(message){
 
       dispatch(ClearMessage())
-
-
       setOpenDeletePoultry(false);
       setOpenEdit(false);
-
-
       setOpenEditPig(false);
       setOpenDeletePig(false);
-
      setOpenEditEgg(false);
      setOpenDeleteEgg(false);
-
      setOpenEditCatFish(false);
      setOpenDeleteCatFish(false)
+
+     
     }
   
  
   },3000)
+
+
+
 
 
 
@@ -985,7 +1018,7 @@ const PigColumns = [
 
      return {
         "Date Created":  newDate,
-        Section:(<h5 style={{marginLeft:5}}>{report?.section}</h5>),
+        Section: report?.section,
         Quantity: (<h5 style={{marginLeft:15}}>{report?.quantity}</h5>) ,
         "Weight ": (<h5 style={{marginLeft:10}}>{report?.weight} Kg</h5>),
         'Created By':  report?.user?.firstName + ' ' + report?.user?.lastName,
@@ -1246,9 +1279,9 @@ const PigColumns = [
 
 
 {/* <Badge badgeContent={pig?.length} color="success" > */}
-<StyledBadge badgeContent={pig?.length} color="success">
+<StyledBadge badgeContent={pig?.length || `${none}`} color="success">
 <Tooltip title="Click To see Reports on Pigs" sx={{cursor:'pointer'}}>
-    <Card sx={{ width: 175, cursor:'pointer' }} className="report" onClick={PigReport}>
+    <Card sx={{ width: 175, cursor:'pointer' }} className="report" onClick={PigReport}  >
       <CardContent>
         <Typography variant="h6" component="div" sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
         Pig Report 
@@ -1259,7 +1292,7 @@ const PigColumns = [
     </StyledBadge> 
 
 
-    <StyledBadge badgeContent={poultry?.length} color="success">
+    <StyledBadge badgeContent={poultry?.length || `${none}`} color="success">
     <Tooltip title="Click To see Reports on Poultry" sx={{cursor:'pointer'}}>
     <Card sx={{ width: 175, cursor:'pointer'  }} className="report" onClick={PoultryReport}>
       <CardContent>
@@ -1273,7 +1306,7 @@ const PigColumns = [
 
 
 
-    <StyledBadge badgeContent={egg?.length} color="success">
+    <StyledBadge badgeContent={egg?.length || `${none}`} color="success">
     <Tooltip title="Click To see Reports on Eggs" sx={{cursor:'pointer'}}>
     <Card sx={{ width: 175, cursor:'pointer'}} className="report" onClick={EggReport}>
       <CardContent>
@@ -1288,7 +1321,7 @@ const PigColumns = [
 
 
 
-    <StyledBadge badgeContent={catFish?.length} color="success">
+    <StyledBadge badgeContent={catFish?.length || `${none}`} color="success">
     <Tooltip title="Click To see Reports on Cat Fish" sx={{cursor:'pointer'}}  onClick={CatFishReport}>
     <Card sx={{ width: 176, cursor:'pointer'  }} className="report">
       <CardContent>
@@ -1493,7 +1526,7 @@ No Report on Poultry yet!
 
 
 {report === 'poultry' && poultry?.length === 0 ?
- <Typography variant="h6" component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }>
+ <Typography variant="h6"    component="div"  sx={{textAlign:'center', whiteSpace:'nowrap', fontWeight:1000, fontSize:15, mt:3} }  >
 No Report on Poultry yet! 
    </Typography>
  
@@ -1632,7 +1665,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'50%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -1862,7 +1895,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'50%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -2113,7 +2146,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'50%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -2337,7 +2370,7 @@ Edit Modal */}
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'50%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
@@ -2895,7 +2928,7 @@ Edit Modal */}
         <br/>
         {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'80%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
