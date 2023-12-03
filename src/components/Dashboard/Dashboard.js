@@ -29,25 +29,27 @@ import TextField from '@mui/material/TextField';
 
 import SetMealIcon from '@mui/icons-material/SetMeal';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import FormControl, { useFormControl } from '@mui/material/FormControl';
+import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 // import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LineChart } from '@mui/x-charts/LineChart';
+// import { LineChart } from '@mui/x-charts/LineChart';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import FormGroup from '@mui/material/FormGroup';
+// import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
+// import DialogActions from '@mui/material/DialogActions';
+// import DialogContent from '@mui/material/DialogContent';
+// import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { jwtDecode } from "jwt-decode"
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 
 
@@ -74,7 +76,18 @@ import {
      GetPigRecord,
      UpdatePigRecord,
      DeletePigRecord,
-     LoggedOut
+     LoggedOut,
+
+     CreateFishRecord,
+     GetFishRecord,
+     UpdateFishRecord,
+     DeleteFishRecord,
+
+     CreatePoultryRecord,
+     GetPoultryRecord,
+     UpdatePoultryRecord,
+     DeletePoultryRecord,
+  
     
    
     
@@ -89,6 +102,10 @@ from "../../Actions/Actions"
 function Dashboard() {
   const navigate = useNavigate();
   const token = sessionStorage.getItem('AdminToken')
+  
+  const admin = JSON.parse(sessionStorage.getItem('Admin'))
+
+  const id = admin?.id
 
 
   useEffect(()=>{
@@ -101,6 +118,8 @@ function Dashboard() {
     dispatch(GetEggRecord())
     dispatch(GetPigRecord())
     dispatch(GetEggStat())
+    dispatch(GetPoultryRecord())
+    dispatch(GetFishRecord())
    
   },[])
 
@@ -113,8 +132,11 @@ function Dashboard() {
 
   const UserInfo = JSON.parse(sessionStorage.getItem('UpdateAdmin'))
   const dispatch = useDispatch()
-  const [selectedProduct, setSelectedProduct] = useState();
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedPig, setSelectedPig] = useState();
+  const [selectedPoultry, setSelectedPoultry] = useState();
+  const [selectedEgg, setSelectedEgg] = useState();
+  const [selectedFish, setSelectedFish] = useState();
   const [selectedPen, setSelectedPen] = useState();
   const [selectedCategory, setSelectedCategory] = useState();
   const [link, setLink] = useState('DashBoard')
@@ -123,9 +145,25 @@ function Dashboard() {
 const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 const [btnValue, setBtnValue] = useState('Submit')
 const [PigBtnValue, setPigBtnValue] = useState('Submit')
+const [FishBtnValue, setFishBtnValue] = useState('Submit')
+const [PoultryBtnValue, setPoultryBtnValue] = useState('Submit')
 const [prod, setProd] = useState(true)
 const [openEdit, setOpenEdit] = useState(false);
 const [openDelete, setOpenDelete] = useState(false);
+
+
+
+const [tableBodyHeight, setTableBodyHeight] = useState("200px");
+const [tableBodyHeight2, setTableBodyHeight2] = useState("300px");
+
+const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
+const [searchBtn, setSearchBtn] = useState(true);
+const [downloadBtn, setDownloadBtn] = useState(true);
+const [printBtn, setPrintBtn] = useState(true);
+const [viewColumnBtn, setViewColumnBtn] = useState(true);
+const [filterBtn, setFilterBtn] = useState(true);
+
+
 
 
 
@@ -136,6 +174,8 @@ const [openDelete, setOpenDelete] = useState(false);
   const loading = useSelector((state)=>state?.Admin?.loading)
   const EggRecords = useSelector((state)=>state?.Admin?.EggRecord)
   const PigRecords = useSelector((state)=>state?.Admin?.PigRecord)
+  const FishRecords = useSelector((state)=>state?.Admin?.FishRecord)
+  const PoultryRecords = useSelector((state)=>state?.Admin?.PoultryRecord)
   const EggStats = useSelector((state)=>state?.Admin?.EggStat)
 const poultry = useSelector((state)=>state?.Admin?.poultyProduct)
 const pig = useSelector((state)=>state?.Admin?.pigProduct)
@@ -149,8 +189,19 @@ const catFish = useSelector((state)=>state?.Admin?.catFishProduct)
 
 
 
+
+
+
+
+
+
+
 useEffect(() => {
   let timerRef = null;
+
+  if(token){
+
+  
 
   const decoded = jwtDecode(token);
 
@@ -160,6 +211,7 @@ useEffect(() => {
   const timeout = expiryTime - currentTime;
   const onExpire = () => {
     dispatch(LoggedOut());
+    sessionStorage.clear()
      navigate('/');
   };
 
@@ -175,6 +227,9 @@ useEffect(() => {
   return () => {
     clearTimeout(timerRef);
   };
+
+
+}
 }, [dispatch, navigate, token]);
 
 
@@ -184,10 +239,10 @@ useEffect(() => {
 const ProductData = {
   product: [
 
-   // { name: "Poultry", category: ["Layers", "Broilers"] },
+    { name: "Poultry", category: ["Layers", "Broilers"] },
     { name: "Pig", category: ["Boar", "Dry Sows", "In-pigs", "Growers", "Weaners", "Piglets"] },
     { name: "Egg", category: ["Big", "Small"] },
-   // { name: "Cat-fish", category: ["Fingerlings", "Mature"] },
+    { name: "Fish", category: ["Fingerlings", "Mature"] },
   ]
 };
 
@@ -208,6 +263,41 @@ const PigData = {
 };
 
 
+const EggData = {
+  EggProduct: [
+
+    { name: "Big" },
+    { name: "Small" },
+  
+  ]
+};
+
+
+
+const PoultryData = {
+  PoultryProduct: [
+
+    { name: "Layers" },
+    { name: "Broilers" },
+  
+  ]
+};
+
+
+
+
+
+const FishData = {
+  FishProduct: [
+
+    { name: "Fingerlings" },
+    { name: "Mature" },
+  
+  ]
+};
+
+
+
 
 const PenData = {
   PigProduct: [
@@ -222,7 +312,11 @@ const PenData = {
 
 const availableProduct = ProductData.product.find((c) => c.name === selectedProduct);
 const availablePig = PigData.PigProduct.find((c) => c.name === selectedPig);
+const availablePoultry = PoultryData.PoultryProduct.find((c) => c.name === selectedPoultry);
+const availableFish = FishData.FishProduct.find((c) => c.name === selectedFish);
+const availableEgg = EggData.EggProduct.find((c) => c.name === selectedEgg);
 const availableCategory = availableProduct?.category?.find((s) => s.name === selectedProduct);
+
 
 
 
@@ -236,11 +330,11 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
    
   }
 
-
+const [status, setStatus] = useState('Approved')
 
   const [EggRecord, setEggRecord] = useState({
-
-    breed:"",
+    user:'',
+    category:"",
     penNumber:'',
     totalBirdHoused:'',
     ageHoused:"",
@@ -249,8 +343,8 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
     feedConsumption:"",
     remark:'',
     culls:"",
-    openingBalance:'',
-    closingBalance:'',
+    // openingBalance:'',
+    // closingBalance:'',
 
     eggCollection:{
       firstTray:"",
@@ -261,29 +355,71 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
     }
 
   })
-  const {breed, penNumber, totalBirdHoused, ageHoused, mortality, closingBalance, waterConsumption, feedConsumption, remark, culls, eggCollection, openingBalance}  = EggRecord
-
+  const { penNumber, totalBirdHoused, ageHoused, mortality,  waterConsumption, feedConsumption, remark, culls, eggCollection, }  = EggRecord
+  
+  EggRecord.user = id
+  EggRecord.category = selectedEgg
 
 
 
 
   
   const [PigRecord, setPigRecord] = useState({
-
+    user:'',
     pen:"",
     category:'',
     room:'',
     quantity:"",
-    Mortality:"",
+    mortality:"",
 
 
   })
-  const {pen, category,room,quantity, Mortality } = PigRecord
+  const {pen, category,room,quantity,  user } = PigRecord
 
   PigRecord.pen = selectedPen
   PigRecord.category = selectedPig
+  PigRecord.user = id
 
 
+
+    
+  const [PoultryRecord, setPoultryRecord] = useState({
+    User:'',
+    category:'',
+    quantity:"",
+    mortality:"",
+
+
+  })
+ // const {cat,qty, mort, User } = PoultryRecord
+
+
+
+ const [FishRecord, setFishRecord] = useState({
+  User:'',
+  category:'',
+  quantity:"",
+  mortality:"",
+  weight:""
+
+
+})
+// const {cat,qty, mort, User } = PoultryRecord
+
+
+
+const handleChangeFish =(e)=>{
+  const {name, value} = e.target
+  setFishRecord({...FishRecord, [name]:value})
+
+}
+ 
+
+  const handleChangePoultry =(e)=>{
+    const {name, value} = e.target
+    setPoultryRecord({...PoultryRecord, [name]:value})
+
+  }
 
   
   
@@ -303,8 +439,10 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
   const HandleSubmit = (e)=>{
     e.preventDefault()
+    const category = selectedEgg
     const data = {
-        breed, 
+      user,
+      category, 
         penNumber,
        totalBirdHoused,
         ageHoused,
@@ -314,20 +452,57 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
          remark,
          culls, 
          eggCollection,
-          openingBalance}
+        
+        }
 
   dispatch(CreateEggRecord(data))
  
+  }
 
 
 
+  const HandleSubmitPoultry = (e)=>{
+    e.preventDefault()
+    const user = id
+    const category = selectedPoultry
+    const mortality = PoultryRecord.mortality
+    const quantity = PoultryRecord.quantity
+    const data = {category,user, mortality, quantity}
+
+  dispatch(CreatePoultryRecord(data))
+ 
+  }
+
+
+
+  const HandleSubmitFish = (e)=>{
+    e.preventDefault()
+    const user = id
+    const category = selectedFish
+    const mortality = FishRecord.mortality
+    const quantity = FishRecord.quantity
+    const weight = FishRecord.weight
+    const data = {category,user, mortality, quantity, weight}
+
+  dispatch(CreateFishRecord(data))
+ 
   }
 
 
   const handleUpdate = (e)=>{
     e.preventDefault()
+    var category = selectedEgg
+    if(category === '' || category === undefined || category === null){
+     var category = sessionStorage.getItem('EggCategory')
+
+    }else{
+     var category = selectedEgg
+    }
+   
+
+ 
     const data = {
-        breed, 
+        category, 
         penNumber,
        totalBirdHoused,
         ageHoused,
@@ -337,18 +512,69 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
          remark,
          culls, 
          eggCollection,
-          openingBalance}
+       
+        }
 
   dispatch(UpdateEggRecord(data))
-
 
   }
 
 
 
+  const handleUpdateFish = (e)=>{
+    e.preventDefault()
+    const user = id
+    const category = selectedFish
+    const mortality = FishRecord.mortality
+    const quantity = FishRecord.quantity
+    const weight = FishRecord.weight
+    const data = {category,user, mortality, quantity, weight}
+
+  dispatch(UpdateFishRecord(data))
+  }
+
+
+
+
+
+
+  const handleUpdatePoultry = (e)=>{
+    e.preventDefault()
+
+    var category = selectedPoultry
+    if(category === '' || category === undefined || category === null){
+     var category = sessionStorage.getItem('PoultryCategory')
+
+    }else{
+     var category = selectedPoultry
+    }
+  
+
+    const user = id
+    const mortality = PoultryRecord.mortality
+    const quantity = PoultryRecord.quantity
+    const data = {category,user, mortality, quantity}
+
+  dispatch(UpdatePoultryRecord(data))
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const handleUpdatePig = (e)=>{
     e.preventDefault()
-    const mortality = Mortality
+    const mortality = PigRecord.mortality
     const data = { pen, category,room,quantity, mortality}
 
   dispatch(UpdatePigRecord(data))
@@ -361,8 +587,8 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
   const HandleSubmitPig = (e)=>{
     e.preventDefault()
-   const mortality = Mortality
-    const data = { pen, category,room,quantity, mortality}
+    const mortality = PigRecord.mortality
+    const data = { user,pen, category,room,quantity, mortality}
  
 
  dispatch(CreatePigRecord(data))
@@ -377,7 +603,9 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
   const handleClickOpenEdit = (record) => {
     setOpenEdit(true);
+
     sessionStorage.setItem('EggUpdateId', record?.id)
+    sessionStorage.setItem('EggCategory', record?.category)
     setEggRecord({...record});
     setBtnValue('Update')
   
@@ -391,6 +619,29 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
     setPigRecord({...record});
    
     setPigBtnValue('Update')
+  
+  };
+
+
+
+  const EditPoultry = (record) => {
+    setOpenEdit(true);
+    sessionStorage.setItem('PoultryUpdateId', record?.id)
+    sessionStorage.setItem('PoultryCategory', record?.category)
+    setPoultryRecord({...record});
+   
+    setPoultryBtnValue('Update')
+  
+  };
+
+
+
+  const EditFish = (record) => {
+    setOpenEdit(true);
+    sessionStorage.setItem('FishUpdateId', record?.id)
+    setFishRecord({...record});
+   
+    setFishBtnValue('Update')
   
   };
   
@@ -415,6 +666,26 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
     // setOpenDelete(true);
      sessionStorage.setItem('PigId', id)
      dispatch( DeletePigRecord())
+   
+     
+     };
+
+
+     
+  const DeletePoultry = (id) => {
+    // setOpenDelete(true);
+     sessionStorage.setItem('PoultryId', id)
+     dispatch( DeletePoultryRecord())
+   
+     
+     };
+
+
+     
+  const DeleteFish = (id) => {
+    // setOpenDelete(true);
+     sessionStorage.setItem('FishId', id)
+     dispatch( DeleteFishRecord())
    
      
      };
@@ -444,8 +715,39 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
 
+const Approve = (record)=>{
+    sessionStorage.setItem('PoultryUpdateId', record?.id)
+  const category = record?.category
+  const data = {category, status}
+  dispatch(UpdatePoultryRecord(data))
+}
 
 
+
+const ApprovePig = (record)=>{
+  sessionStorage.setItem('PigUpdateId', record?.id)
+  const category = record?.category
+  const data = {category, status}
+  dispatch(UpdatePigRecord(data))
+}
+
+
+
+const ApproveFish = (record)=>{
+  sessionStorage.setItem('FishUpdateId', record?.id)
+  const category = record?.category
+  const data = {category, status}
+  dispatch(UpdateFishRecord(data))
+}
+
+
+const ApproveEgg = (record)=>{
+
+  sessionStorage.setItem('EggUpdateId', record?.id)
+  const category = record?.category
+  const data = {category, status}
+  dispatch(UpdateEggRecord(data))
+}
 
 
 
@@ -520,14 +822,14 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
       sort: true,
      }
     },
-    {
-     name: "Opening Stock",
-     label: "Opening Stock",
-     options: {
-      filter: true,
-      sort: false,
-     }
-    },
+    // {
+    //  name: "Opening Stock",
+    //  label: "Opening Stock",
+    //  options: {
+    //   filter: true,
+    //   sort: false,
+    //  }
+    // },
     {
      name: "Mortality",
      label: "Mortality",
@@ -537,8 +839,8 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
      }
     },
     {
-     name: "Breed",
-     label: "Breed",
+     name: "Category",
+     label: "Category",
      options: {
       filter: true,
       sort: false,
@@ -558,14 +860,14 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
 
-     {
-      name: "Culls",
-      label: "Culls",
-      options: {
-       filter: true,
-       sort: false,
-      }
-     },
+    //  {
+    //   name: "Culls",
+    //   label: "Culls",
+    //   options: {
+    //    filter: true,
+    //    sort: false,
+    //   }
+    //  },
 
 
      {
@@ -650,11 +952,39 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
      
 
+    //  {
+    //   name: "Total Bird Housed",
+    //   label: "Total Bird Housed",
+    //   options: {
+    //    filter: true,
+    //    sort: false,
+    //   }
+    //  },
+
      {
-      name: "Total Bird Housed",
-      label: "Total Bird Housed",
+      name: "Status",
+      label: "Status",
       options: {
        filter: true,
+       sort: false,
+      }
+     },
+
+     {
+      name: "Remark",
+      label: "Remark",
+      options: {
+       filter: false,
+       sort: false,
+      }
+     },
+
+
+     {
+      name: "Action",
+      label: "Action",
+      options: {
+       filter: false,
        sort: false,
       }
      },
@@ -741,6 +1071,139 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
      },
 
 
+     {
+      name: "Status",
+      label: "Status",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+
+     {
+      name: "Remark",
+      label: "Remark",
+      options: {
+       filter: false,
+       sort: false,
+      }
+     },
+
+
+     {
+      name: "Action",
+      label: "Action",
+      options: {
+       filter: false,
+       sort: false,
+      }
+     },
+ 
+
+  
+
+
+     {
+      name: "Edit",
+      label: "Edit",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+
+
+     {
+      name: "Delete",
+      label: "Delete",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+   ];
+
+
+
+
+
+
+    
+ 
+
+
+
+
+
+    
+   const PoultryRecordcolumns = [
+    {
+     name: "Date Entered",
+     label: "Date Entered",
+     options: {
+      filter: true,
+      sort: true,
+     }
+    },
+    {
+     name: "Category",
+     label: "Category",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+    {
+     name: "Mortality",
+     label: "Mortality",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+    {
+     name: "Quantity",
+     label: "Quantity",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+
+
+    {
+      name: "Status",
+      label: "Status",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+
+     {
+      name: "Remark",
+      label: "Remark",
+      options: {
+       filter: false,
+       sort: false,
+      }
+     },
+
+
+     {
+      name: "Action",
+      label: "Action",
+      options: {
+       filter: false,
+       sort: false,
+      }
+     },
+
+
+
+
+  
+
  
 
   
@@ -769,12 +1232,123 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
 
+
+
+
+
+   const FishRecordcolumns = [
+    {
+     name: "Date Entered",
+     label: "Date Entered",
+     options: {
+      filter: true,
+      sort: true,
+     }
+    },
+    {
+     name: "Category",
+     label: "Category",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+    {
+     name: "Weight",
+     label: "Weight",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+    {
+     name: "Quantity",
+     label: "Quantity",
+     options: {
+      filter: true,
+      sort: false,
+     }
+    },
+
+
+    {
+      name: "Mortality",
+      label: "Mortality",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+
+
+    {
+      name: "Status",
+      label: "Status",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+
+     {
+      name: "Remark",
+      label: "Remark",
+      options: {
+       filter: false,
+       sort: false,
+      }
+     },
+
+
+     {
+      name: "Action",
+      label: "Action",
+      options: {
+       filter: false,
+       sort: false,
+      }
+     },
+
+
+
+
+  
+
+ 
+
+  
+
+
+     {
+      name: "Edit",
+      label: "Edit",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+
+
+     {
+      name: "Delete",
+      label: "Delete",
+      options: {
+       filter: true,
+       sort: false,
+      }
+     },
+   ];
+
+   
+
+
+
      
     
 
    const data =
-   EggRecords &&
-   EggRecords?.map((record) => {
+   PoultryRecords &&
+   PoultryRecords?.map((record) => {
     // var date = record?.createdAt,
     // newDate = (new Date(date))?.toDateString();
 
@@ -782,7 +1356,28 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
  
         'Opening Stock': (<h5 style={{marginLeft:30}}>{record?.openingBalance} </h5>),
         Mortality : (<h5 style={{marginLeft:20}}>{record?.mortality} </h5>),
-        Section :  (<h5 style={{marginLeft:20}}>{record?.breed} </h5>),
+        Section :  (<h5 style={{marginLeft:20}}>{record?.category} </h5>),
+        "Closing Stock":(<h5 style={{marginLeft:30}}>{record?.openingBalance} </h5>)
+
+
+   
+
+     };
+   });
+
+
+
+   const data2 =
+   PigRecords &&
+   PigRecords?.map((record) => {
+    // var date = record?.createdAt,
+    // newDate = (new Date(date))?.toDateString();
+
+     return {
+ 
+        'Opening Stock': (<h5 style={{marginLeft:30}}>{record?.openingBalance} </h5>),
+        Mortality : (<h5 style={{marginLeft:20}}>{record?.mortality} </h5>),
+        Section :  (<h5 style={{marginLeft:20}}>{record?.category} </h5>),
         "Closing Stock":(<h5 style={{marginLeft:30}}>{record?.openingBalance} </h5>)
 
 
@@ -801,11 +1396,11 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
      return {
         "Date Entered":  newDate,
-        'Opening Stock': (<h5 style={{marginLeft:30}}>{record?.openingBalance} </h5>),
+       // 'Opening Stock': (<h5 style={{marginLeft:30}}>{record?.openingBalance} </h5>),
         Mortality : (<h5 style={{marginLeft:20}}>{record?.mortality} </h5>),
-        Breed :record?.breed,
+        Category :record?.category,
         'Age Housed' :  (<h5 style={{marginLeft:30}}>{record?.ageHoused} </h5>),
-        Culls :  record?.culls,
+       // Culls :  record?.culls,
         'Feed Consumption': (<h5 style={{marginLeft:30}}>{record?.feedConsumption} </h5>),
         'Water Consumption': (<h5 style={{marginLeft:30}}>{record?.waterConsumption} </h5>),
         'Pen Number': (<h5 style={{marginLeft:30}}>{record?.penNumber} </h5>),
@@ -814,11 +1409,13 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
         'Third Tray': (<h5 style={{marginLeft:20}}>{record?.eggCollection?.thirdTray} </h5>),
         Cracks: (<h5 style={{marginLeft:20}}>{record?.eggCollection?.cracks} </h5>),
         "Total Bird Housed": (<h5 style={{marginLeft:20}}>{record?.totalBirdHoused} </h5>),
+        Status:record?.status,
 
-   
-        // Remark:  report?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
-       
-       
+        Remark:  record?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
+
+    
+        Action:  record.status === 'Pending' ?      <button type="submit" className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px', marginTop:'20px', backgroundColor:'green', width: 100, height:'40px'}}     onClick={() => `${( ApproveEgg(record))}`}> Approve</button> : <button type="submit" cursor='not-allowed' className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px',backgroundColor:'gray',padding:'10px', cursor:'not-allowed', color:'black',width: 100, height:'40px', marginTop:'20px',border:'none', outline:'none'}}> Approved </button>,
+     
 
           Edit:   (
             <EditIcon  sx={{cursor:'pointer', color:'blue'}} onClick={() => `${( handleClickOpenEdit(record))}`}/>
@@ -843,10 +1440,17 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
      return {
         "Date Entered":  newDate,
         Category:  record?.category,
+        Status:record?.status,
         Room:  (<h5 style={{marginLeft:15}}>{record?.room} </h5>),
         Quantity:   (<h5 style={{marginLeft:20}}>{record?.quantity} </h5>),
         Mortality : (<h5 style={{marginLeft:20}}>{record?.mortality} </h5>),
        Pen: (<h5 style={{marginLeft:10}}>{record?.pen} </h5>),
+
+       Remark:  record?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
+
+    
+       Action:  record.status === 'Pending' ?      <button type="submit" className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px', marginTop:'20px', backgroundColor:'green', width: 100, height:'40px'}}     onClick={() => `${( ApprovePig(record))}`}> Approve</button> : <button type="submit" cursor='not-allowed' className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px',backgroundColor:'gray',padding:'10px', cursor:'not-allowed', color:'black',width: 100, height:'40px', marginTop:'20px',border:'none', outline:'none'}}> Approved </button>,
+     
 
          
           Edit:   (
@@ -863,6 +1467,74 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
 
+   
+
+
+
+
+   
+   const PoultryRecordData =
+   PoultryRecords &&
+   PoultryRecords?.map((record) => {
+    var date = record?.createdAt,
+    newDate = (new Date(date))?.toDateString();
+
+     return {
+        "Date Entered":  newDate,
+        Category:  record?.category,
+        Status:record?.status,
+        Quantity:   (<h5 style={{marginLeft:20}}>{record?.quantity} </h5>),
+        Mortality : (<h5 style={{marginLeft:20}}>{record?.mortality} </h5>),
+      
+       Remark:  record?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
+
+       Action:  record.status === 'Pending' ?      <button type="submit" className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px', marginTop:'20px', backgroundColor:'green', width: 100, height:'40px'}}     onClick={() => `${( Approve(record))}`}> Approve</button> : <button type="submit" cursor='not-allowed' className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px',backgroundColor:'gray',padding:'10px', cursor:'not-allowed', color:'black',width: 100, height:'40px', marginTop:'20px',border:'none', outline:'none'}}> Approved </button>,
+     
+          Edit:   (
+            <EditIcon  sx={{cursor:'pointer', color:'blue'}} onClick={() => `${( EditPoultry(record))}`}/>
+          ),
+
+          Delete:   (
+            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}   onClick={() => `${( DeletePoultry(record?.id))}`} />
+          ),
+
+     };
+   });
+
+
+
+   const FishRecordData  =
+   FishRecords &&
+   FishRecords?.map((record) => {
+    var date = record?.createdAt,
+    newDate = (new Date(date))?.toDateString();
+
+     return {
+        "Date Entered":  newDate,
+        Category:  record?.category,
+        Mortality:(<h5 style={{marginLeft:20}}>{record?.mortality} </h5>),
+        Status:record?.status,
+        Quantity:   (<h5 style={{marginLeft:20}}>{record?.quantity} </h5>),
+      Weight :(<h5 style={{marginLeft:20}}>{record?.weight}Kg  </h5>),
+      
+       Remark:  record?.status  ==='Pending' ?  <CancelIcon sx={{cursor:'pointer', color:'red', marginLeft:2}}/> : <CheckCircleIcon sx={{cursor:'pointer', color:'green', marginLeft:2}}/>,
+
+       Action:  record.status === 'Pending' ?      <button type="submit" className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px', marginTop:'20px', backgroundColor:'green', width: 100, height:'40px'}}     onClick={() => `${( ApproveFish(record))}`}> Approve</button> : <button type="submit" cursor='not-allowed' className="btn btn-success btn-block mb-4" style={{ marginLeft:'-20px',backgroundColor:'gray',padding:'10px', cursor:'not-allowed', color:'black',width: 100, height:'40px', marginTop:'20px',border:'none', outline:'none'}}> Approved </button>,
+     
+
+          Edit:   (
+            <EditIcon  sx={{cursor:'pointer', color:'blue'}} onClick={() => `${( EditFish(record))}`}/>
+          ),
+
+          Delete:   (
+            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}   onClick={() => `${( DeleteFish(record?.id))}`} />
+          ),
+
+     };
+   });
+ 
+ 
+
 
 
 
@@ -872,8 +1544,34 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
    const options2 = {
-     filterType: 'checkbox',
-   };
+    filterType: 'checkbox',
+
+    search: searchBtn,
+    download: downloadBtn,
+    print: printBtn,
+    viewColumns: viewColumnBtn,
+    filter: filterBtn,
+    filterType: "dropdown",
+  
+    tableBodyHeight,
+    tableBodyMaxHeight,
+  };
+
+
+
+  const options3 = {
+    filterType: 'checkbox',
+
+    search: searchBtn,
+    download: downloadBtn,
+    print: printBtn,
+    viewColumns: viewColumnBtn,
+    filter: filterBtn,
+    filterType: "dropdown",
+  
+    tableBodyHeight: tableBodyHeight2,
+   tableBodyMaxHeight,
+  };
 
 
 
@@ -1162,12 +1860,12 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
            </Link>
            </li>
 
-
+{/* 
            <li className="list-group-item list-group-item-action py-2 ripple"><i className="fas fa-users fa-fw me-3"></i>
            <Link to="/Dashboard/Transactions" >
            <span style={{color:'black'}}>All Transactions</span> 
            </Link>
-           </li>
+           </li> */}
 
 
            
@@ -1810,7 +2508,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
   title={"Poultry"}
   data={data}
   columns={columns}
-  options={options}
+  options={options2}
  
 
 />
@@ -1822,9 +2520,9 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 <div style={{width:800}}>
 <MUIDataTable
   title={"Pigs"}
-  data={data}
+  data={data2}
   columns={columns}
-  options={options}
+  options={options2}
 />
 
 </div>
@@ -1847,17 +2545,18 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
             
             <div className="page-contents">
 
-<Box sx={{ml:5}}>
-              <FormControl sx={{  width: 150 }}>
-                <InputLabel id="demo-multiple-name-label">Select Product...</InputLabel>
+
+<Box sx={{ justifyContent: 'center', alignItems:'center', textAlign:"center", mt:2 }}>
+              <FormControl sx={{  width: 600 }}>
+                <InputLabel id="demo-multiple-name-label" >Select Product To Enter Record...</InputLabel>
                 <Select
-                  sx={{ width: 450, height: 55 }}
+                  sx={{ width: 600, height: 55 }}
                   labelId="demo-multiple-name-label"
                   id="demo-multiple-name"
                   value={selectedProduct || ""}
                   fullWidth
-               onFocus={handleFocus}
-                  input={<OutlinedInput label="Select Product..." />}
+              // onFocus={handleFocus}
+                  input={<OutlinedInput label="Select Product To Enter Record..." />}
                   onChange={(e) => setSelectedProduct(e.target.value)}>
                   {ProductData.product.map((value, key) => (
                     <MenuItem key={key} value={value.name}> 
@@ -1867,6 +2566,14 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
                 </Select>
               </FormControl>
               </Box>
+              <br/>
+
+
+
+              {/* {selectedProduct === null ? 
+              <h3 style={{ textAlign: 'center', marginTop:'40px', fontFamily:'sans-serif' }}>Please Select Product To Start Entering Record!</h3>:""}
+
+ */}
 
 
 
@@ -1888,7 +2595,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 }
 
 {error &&
-<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'30%', margin:'0px auto'}}>
 <div className="containerss"  style={{textAlign:'center',  margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong>  <i className="fa fa-exclamation-circle" aria-hidden="true"></i></strong>  {error}!
@@ -1908,7 +2615,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
 
-      {selectedProduct === 'Egg' ?    
+      {selectedProduct === 'Egg' && link === 'MonthlyStat'  ?    
       <Box> 
 
 <Box
@@ -1926,20 +2633,27 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
         }}>         
 
 
-<Box >
-           <TextField
-          label="Breed"
-          id="outlined-start-adornment"
-          sx={{ width: 250 }}
-          type="text"
-         onChange={handleChange}
-         name='breed'
-         value={breed}
-         onFocus={handleFocus}
-        
-        /> 
-        </Box>
-        <Box >
+            <Box sx={{mr:12}}>
+              <FormControl sx={{  width: 150 }}>
+                <InputLabel id="demo-multiple-name-label">Select Category...</InputLabel>
+                <Select
+                  sx={{ width: 250, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                  value={selectedEgg || ""}
+                  fullWidth
+                 onFocus={handleFocus}
+                  input={<OutlinedInput label="Select Product..." />}
+                  onChange={(e) => setSelectedEgg(e.target.value)}>
+                  {EggData.EggProduct.map((value, key) => (
+                    <MenuItem key={key} value={value.name}> 
+                      {value.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              </Box>  
+              <Box >
            <TextField
           label="Pen Number"
           id="outlined-start-adornment"
@@ -2173,7 +2887,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
 
-        <Box >
+        {/* <Box >
            <TextField
           label="Opening Balance"
           id="outlined-start-adornment"
@@ -2198,7 +2912,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
          onFocus={handleFocus}
   
         /> 
-        </Box>
+        </Box> */}
 
 
 
@@ -2206,7 +2920,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
            <TextField
           label="Remark..."
           id="outlined-start-adornment"
-          sx={{ width: 550 }}
+          sx={{ width: 1100 }}
           type='text'
           onChange={handleChange}
           name='remark'
@@ -2274,7 +2988,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
           
             
- {selectedProduct === 'Egg' &&  EggRecords?.length > 0 ?   
+ {selectedProduct === 'Egg' &&  EggRecords?.length > 0  && link === 'MonthlyStat'?   
 
 
 <div >
@@ -2282,7 +2996,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
   title={"Egg Record"}
   data={EggRecordData}
   columns={EggRecordcolumns}
-  options={options2}
+  options={options3}
 />
 
 </div> : ""}
@@ -2302,11 +3016,7 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
 
 
 
-
-
-
-
-            {selectedProduct === 'Pig' ?    
+            {selectedProduct === 'Pig'  && link === 'MonthlyStat' ?    
       <Box> 
 
 <Box
@@ -2395,8 +3105,8 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
           sx={{ width: 350}}
           type='number'
          onChange={handleChangePig}
-          name='Mortality'
-          value={Mortality}
+          name='mortality'
+          value={PigRecord?.mortality}
           onFocus={handleFocus}
         /> 
         </Box>
@@ -2449,18 +3159,13 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
         </Box> 
 
 
-
-
-     
-        
-
         : ""}
 
 
 
 
             
- {selectedProduct === 'Pig' &&  PigRecords?.length > 0 ?   
+ {selectedProduct === 'Pig' &&  PigRecords?.length > 0 && link === 'MonthlyStat' ?   
 
 
 <div style={{marginTop:'100px', width:1800, margin:'100px auto 0 auto'}} >
@@ -2468,10 +3173,352 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
   title={"Pig Record"}
   data={PigRecordData}
   columns={PigRecordcolumns}
-  options={options2}
+  options={options3}
 />
 
 </div> : ""}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/* Poultry Start */}
+
+
+
+
+{selectedProduct === 'Poultry'  && link === 'MonthlyStat'?    
+      <Box> 
+
+<Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          textAlign:'center',
+          alignItems:'center',
+          flexWrap:'wrap',
+          p: 1,
+          m: 1,
+          mt:2,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+        }}>   
+
+
+
+
+        <Box sx={{mr:50}}>
+              <FormControl sx={{  width: 150 }}>
+                <InputLabel id="demo-multiple-name-label">Select Category...</InputLabel>
+                <Select
+                  sx={{ width: 550, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                  value={selectedPoultry || ""}
+                  fullWidth
+                 onFocus={handleFocus}
+                  input={<OutlinedInput label="Select Product..." />}
+                  onChange={(e) => setSelectedPoultry(e.target.value)}>
+                  {PoultryData.PoultryProduct.map((value, key) => (
+                    <MenuItem key={key} value={value.name}> 
+                      {value.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              </Box>   
+
+    
+        <Box >
+           <TextField
+          label="Mortality"
+          id="outlined-start-adornment"
+          sx={{ width: 550}}
+          type='number'
+         onChange={handleChangePoultry}
+          name='mortality'
+          value={PoultryRecord.mortality}
+          onFocus={handleFocus}
+        /> 
+        </Box>
+
+
+        <Box >
+           <TextField
+          label="Quantity"
+          id="outlined-start-adornment"
+          sx={{ width: 550}}
+          type='number'
+          onChange={handleChangePoultry} 
+          value={PoultryRecord.quantity}
+          name='quantity'
+          onFocus={handleFocus}
+        /> 
+        </Box>
+        </Box>
+
+        {/* <Box sx={{mt:2, float:'right', mr:10}}>
+        <button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'#012949', width: 250}} onClick={HandleSubmitPig} >
+            Submit
+          </button> 
+             
+        </Box>  */}
+
+
+
+
+
+
+        {PoultryBtnValue === 'Submit' ?
+        <Box sx={{mt:2, float:'right', mr:10}}>
+        <button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'#012949', width: 250}} onClick={HandleSubmitPoultry} >
+            Submit
+          </button> 
+             
+        </Box> : ""} 
+
+
+{PoultryBtnValue === 'Update' ?
+ <Box sx={{mt:2, float:'right', mr:10}}>
+
+<button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'#012949', width: 250}} onClick={handleUpdatePoultry} >
+    Update
+  </button> 
+     
+</Box> : ""}
+
+
+        </Box> 
+
+
+        : ""}
+
+
+
+
+            
+ {selectedProduct === 'Poultry' &&  PoultryRecords?.length > 0 && link === 'MonthlyStat' ?   
+
+
+<div style={{marginTop:'100px', width:1800, margin:'100px auto 0 auto'}} >
+<MUIDataTable
+  title={"Poultry Record"}
+  data={PoultryRecordData}
+  columns={PoultryRecordcolumns}
+  options={options3}
+/>
+
+</div> : ""}
+
+
+
+{/* poultry stop */}
+
+
+
+
+
+
+
+
+{/* Fish Start */}
+
+
+
+
+{selectedProduct === 'Fish' && link === 'MonthlyStat' ?    
+      <Box> 
+
+<Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          textAlign:'center',
+          alignItems:'center',
+          flexWrap:'wrap',
+          p: 1,
+          m: 1,
+          mt:2,
+          bgcolor: 'background.paper',
+          borderRadius: 1,
+        }}>   
+
+
+
+
+        <Box sx={{mr:30}}>
+              <FormControl sx={{  width: 150 }}>
+                <InputLabel id="demo-multiple-name-label">Select Category...</InputLabel>
+                <Select
+                  sx={{ width: 400, height: 55 }}
+                  labelId="demo-multiple-name-label"
+                  id="demo-multiple-name"
+                  value={selectedFish || ""}
+                  fullWidth
+                 onFocus={handleFocus}
+                  input={<OutlinedInput label="Select Product..." />}
+                  onChange={(e) => setSelectedFish(e.target.value)}>
+                  {FishData.FishProduct.map((value, key) => (
+                    <MenuItem key={key} value={value.name}> 
+                      {value.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              </Box>   
+
+    
+        <Box >
+           <TextField
+          label="Mortality"
+          id="outlined-start-adornment"
+          sx={{ width: 400}}
+          type='number'
+         onChange={handleChangeFish}
+          name='mortality'
+          value={FishRecord.mortality}
+          onFocus={handleFocus}
+        /> 
+        </Box>
+
+
+        <Box >
+           <TextField
+          label="Quantity"
+          id="outlined-start-adornment"
+          sx={{ width: 400}}
+          type='number'
+          onChange={handleChangeFish} 
+          value={FishRecord.quantity}
+          name='quantity'
+          onFocus={handleFocus}
+        /> 
+        </Box>
+
+
+
+        <Box >
+           <TextField
+          label="weight"
+          id="outlined-start-adornment"
+          sx={{ width: 400}}
+          type='number'
+          onChange={handleChangeFish} 
+          value={FishRecord.weight}
+          name='weight'
+          onFocus={handleFocus}
+        /> 
+        </Box>
+        </Box>
+
+        {/* <Box sx={{mt:2, float:'right', mr:10}}>
+        <button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'#012949', width: 250}} onClick={HandleSubmitPig} >
+            Submit
+          </button> 
+             
+        </Box>  */}
+
+
+
+
+
+
+        {FishBtnValue === 'Submit' ?
+        <Box sx={{mt:2, float:'right', mr:10}}>
+        <button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'#012949', width: 250}} onClick={HandleSubmitFish} >
+            Submit
+          </button> 
+             
+        </Box> : ""} 
+
+
+{FishBtnValue === 'Update' ?
+ <Box sx={{mt:2, float:'right', mr:10}}>
+
+<button type="submit" className="btn btn-success btn-block mb-4" style={{backgroundColor:'#012949', width: 250}} onClick={handleUpdateFish} >
+    Update
+  </button> 
+     
+</Box> : ""}
+
+
+        </Box> 
+
+
+        : ""}
+
+
+
+
+            
+ {selectedProduct === 'Fish' &&  FishRecords?.length > 0 && link === 'MonthlyStat' ?   
+
+
+<div style={{marginTop:'100px', width:1800, margin:'100px auto 0 auto'}} >
+<MUIDataTable
+  title={"Fish Record"}
+  data={FishRecordData}
+  columns={FishRecordcolumns}
+  options={options3}
+/>
+
+</div> : ""}
+
+
+
+{/* Fish stop */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2498,17 +3545,6 @@ const availableCategory = availableProduct?.category?.find((s) => s.name === sel
             <div className="page-content">
             
              <h3 style={{textAlign: 'center'}}>No Record on Vaccination!</h3>
-
-               
-
-
-
-
-
-
-
-
-
 
               
             

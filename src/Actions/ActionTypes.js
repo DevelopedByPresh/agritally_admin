@@ -92,9 +92,6 @@ export const  GET_ALL_TRANSACTIONS ='GET_ALL_TRANSACTIONS '
 export const  UPDATE_TRANSACTION ='UPDATE_TRANSACTION '
 export const  DELETE_TRANSACTION ='DELETE_TRANSACTION '
 
-
-
-
 // Transactions END
 
 
@@ -108,12 +105,9 @@ export const UPDATE_EGG_RECORD = 'UPDATE_EGG_RECORD'
 export const DELETE_EGG_RECORD = 'DELETE_EGG_RECORD'
 export const GET_EGG_STATISTICS = 'GET_EGG_STATISTICS'
 
-
-
-
-
-
 // Egg Record End
+
+
 
 
 
@@ -123,10 +117,26 @@ export const GET_PIG_RECORD =    'GET_PIG_RECORD'
 export const UPDATE_PIG_RECORD = 'UPDATE_PIG_RECORD'
 export const DELETE_PIG_RECORD = 'DELETE_PIG_RECORD'
 
-
-
-
-
-
-
 // Pig Record End
+
+
+
+
+// Poultry Record Start
+export const CREATE_POULTRY_RECORD = 'CREATE_POULTRY_RECORD'
+export const GET_POULTRY_RECORD =    'GET_POULTRY_RECORD'
+export const UPDATE_POULTRY_RECORD = 'UPDATE_POULTRY_RECORD'
+export const DELETE_POULTRY_RECORD = 'DELETE_POULTRY_RECORD'
+
+
+// Poultry Record End
+
+
+// FISH Record Start
+export const CREATE_FISH_RECORD = 'CREATE_FISH__RECORD'
+export const GET_FISH_RECORD =    'GET_FISH_RECORD'
+export const UPDATE_FISH_RECORD = 'UPDATE_FISH_RECORD'
+export const DELETE_FISH_RECORD = 'DELETE_FISH_RECORD'
+
+
+// FISH Record End

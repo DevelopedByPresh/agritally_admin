@@ -59,6 +59,10 @@ import { jwtDecode } from "jwt-decode"
   useEffect(() => {
     let timerRef = null;
   
+    if(token){
+  
+    
+  
     const decoded = jwtDecode(token);
   
     const expiryTime = (new Date(decoded.exp * 1000)).getTime();
@@ -67,6 +71,7 @@ import { jwtDecode } from "jwt-decode"
     const timeout = expiryTime - currentTime;
     const onExpire = () => {
       dispatch(LoggedOut());
+      sessionStorage.clear()
        navigate('/');
     };
   
@@ -82,7 +87,11 @@ import { jwtDecode } from "jwt-decode"
     return () => {
       clearTimeout(timerRef);
     };
+  
+  
+  }
   }, [dispatch, navigate, token]);
+  
   
 
 
@@ -120,6 +129,10 @@ const [singleCart, setSingleCart] = useState([])
 
 
 
+
+
+
+
 const handleFocus = ()=>{
     if(error){
         dispatch(ClearError())
@@ -144,6 +157,7 @@ const handleFocus = ()=>{
   const handleClickOpenDeleteCart = (id) => {
     setOpenDeleteCart(true);
     sessionStorage.setItem('CartId', id)
+
 };
 
 const handleClickCloseDeleteCart = () => {
@@ -389,7 +403,7 @@ const handleClickCloseDeleteCart = () => {
      
 
           Delete:   (
-            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteCart(cart?._id))}`}  />
+            <DeleteIcon  sx={{cursor:'pointer', color:'red'}}  onClick={() => `${( handleClickOpenDeleteCart(cart?.id))}`}  />
           ),
   
 
@@ -631,22 +645,23 @@ All Carts Created By Every Staff
         aria-describedby="alert-dialog-description"
       >
         <DialogContent><br/>
-        <l1>No of Items : {singleCart?.length}</l1>
+        <h3>No of Items : {singleCart?.length}</h3>
     <br/>
     <br/>
     <br/>
 {singleCart && singleCart?.map((item=>(
-  <div>
+  <div key={item?._id}> 
    
 
-<div style={{display:'flex', justifyContent:'space-around'}}>
-  <li>Product : {item?.productId?.category} </li>  
-  <li> Category : {item?.productId?.section}</li>  
-  <li> Quantity : {item?.quantity}</li> 
-  <li> Price : ₦ {item?.price}</li>  
+  <div style={{display:'flex', justifyContent:'space-around'}} key={item?._id}>
+  <h3 >Product : {item?.productId[0]?.category} </h3>  
+  <h3> Category : {item?.productId[0]?.section}</h3>  
+  <h3> Quantity : {item?.quantity}</h3> 
+  <h3> Price : ₦ {item?.price}</h3>  
  
-  <li> Total : ₦{item?.subtotal}</li>  
+  <h3> Total : ₦{item?.subtotal}</h3>  
   </div>
+ 
   <hr/>
   </div>
 )))}
@@ -712,7 +727,7 @@ All Carts Created By Every Staff
 
         {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'60%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!

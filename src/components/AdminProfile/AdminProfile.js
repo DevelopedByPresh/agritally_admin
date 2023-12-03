@@ -2,14 +2,61 @@ import React,{useEffect, useState} from "react"
 import  "./AdminProfile.css"
 
 import {useDispatch, useSelector} from 'react-redux'
-import {LoggedOut} from '../../Actions/Actions'
+
 import {useNavigate} from "react-router-dom"
-import {UpdateProfile,      ClearMessage, ClearError} from "../../Actions/Actions"
+import {UpdateProfile, LoggedOut,     ClearMessage, ClearError} from "../../Actions/Actions"
+import { jwtDecode } from "jwt-decode"
 
 
 const AdminProfile = ()=>{
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const token = sessionStorage.getItem('AdminToken')
+
+
+
+
+
+  useEffect(() => {
+    let timerRef = null;
+  
+    if(token){
+  
+    
+  
+    const decoded = jwtDecode(token);
+  
+    const expiryTime = (new Date(decoded.exp * 1000)).getTime();
+    const currentTime = (new Date()).getTime();
+  
+    const timeout = expiryTime - currentTime;
+    const onExpire = () => {
+      dispatch(LoggedOut());
+      sessionStorage.clear()
+       navigate('/');
+    };
+  
+    if (timeout > 0) {
+      // token not expired, set future timeout to log out and redirect
+      timerRef = setTimeout(onExpire, timeout);
+    } else {
+      // token expired, log out and redirect
+      onExpire();
+    }
+  
+    // Clear any running timers on component unmount or token state change
+    return () => {
+      clearTimeout(timerRef);
+    };
+  
+  
+  }
+  }, [dispatch, navigate, token]);
+  
+  
+
+
+
 
   const UserInfo = JSON.parse(sessionStorage.getItem('UpdateAdmin'))
   const message = useSelector((state)=>state?.Admin?.message)
@@ -150,7 +197,7 @@ setTimeout(()=>{
       <div className="container-fluid d-flex align-items-center">
         <div className="row">
           <div className="col-lg-7 col-md-10">
-            <h1 className="display-2 text-white  font-weight-medium"> {UserInfo?.lastName} {UserInfo?.firstName} </h1>
+            <h1 className="display-2 text-white text-capitalize"> {UserInfo?.lastName} {UserInfo?.firstName} </h1>
             <p className="text-white mt-0 mb-5">This is your profile page. You can see the progress you have made with your work and manage your Account</p>
             
             <a href="#!" className="btn btn-dark"  onClick={LogoutUser}>Logout</a>

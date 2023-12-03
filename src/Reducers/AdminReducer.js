@@ -21,6 +21,8 @@ const initialState = {
     transactions:[],
     EggRecord:[],
     PigRecord:[],
+    FishRecord:[],
+    PoultryRecord:[],
     EggStat:[]
 }
 
@@ -552,7 +554,7 @@ const AdminReducer = (state=initialState, action) =>{
                                             };
 
 
-                                                  
+                                  
   
   
                                     // EVERYTHING THAT HAS TO DO WITH Pig RECORD END
@@ -561,8 +563,104 @@ const AdminReducer = (state=initialState, action) =>{
 
 
 
+                                     // EVERYTHING THAT HAS TO DO WITH Poultry RECORD START
 
 
+                                     case TYPES.CREATE_POULTRY_RECORD:
+                                      return{
+                                        ...state,
+                                        loading:false,
+                                        error:false,
+                                        message:action.payload
+                                      }
+
+
+
+                                      case TYPES.GET_POULTRY_RECORD:
+                                        return{
+                                          ...state,
+                                          loading:false,
+                                          error:false,
+                                          PoultryRecord:action.payload
+                                        }
+
+
+
+                                          
+                                        case TYPES.UPDATE_POULTRY_RECORD:
+                                          return {
+                                            ...state,
+                                            error: false,
+                                            loading: false,
+                                            message:action.payload
+                                           
+                                          };
+        
+                                          
+                                          case TYPES.DELETE_POULTRY_RECORD:
+                                            return {
+                                              ...state,
+                                              error: false,
+                                              loading: false,
+                                              message:action.payload
+                                             
+                                            };
+  
+                                    // EVERYTHING THAT HAS TO DO WITH Poultry RECORD END
+
+
+
+
+
+                                    
+                                     // EVERYTHING THAT HAS TO DO WITH FISH RECORD START
+
+
+                                     case TYPES.CREATE_FISH_RECORD:
+                                      return{
+                                        ...state,
+                                        loading:false,
+                                        error:false,
+                                        message:action.payload
+                                      }
+
+
+
+                                      case TYPES.GET_FISH_RECORD:
+                                        return{
+                                          ...state,
+                                          loading:false,
+                                          error:false,
+                                          FishRecord:action.payload
+                                        }
+
+
+
+                                          
+                                        case TYPES.UPDATE_FISH_RECORD:
+                                          return {
+                                            ...state,
+                                            error: false,
+                                            loading: false,
+                                            message:action.payload
+                                           
+                                          };
+        
+                                          
+                                          case TYPES.DELETE_FISH_RECORD:
+                                            return {
+                                              ...state,
+                                              error: false,
+                                              loading: false,
+                                              message:action.payload
+                                             
+                                            };
+
+
+                                                  
+  
+  
+                                    // EVERYTHING THAT HAS TO DO WITH Fiah RECORD END
 
 
 

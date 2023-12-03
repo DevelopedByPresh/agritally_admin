@@ -2,15 +2,11 @@
 
 import * as React from 'react';
 import Button from '@mui/material/Button';
-// import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import {Link,useNavigate } from "react-router-dom"
-import Autocomplete from '@mui/material/Autocomplete';
 import "./SignUp.css"
 import { useEffect, useState } from 'react';
 
@@ -37,6 +33,8 @@ export default function SignIn() {
   const message = useSelector((state)=>state?.Admin?.message)
   const error = useSelector((state)=>state?.Admin?.error)
   const loading = useSelector((state)=>state?.Admin?.loading)
+
+ 
 
 
 
@@ -73,6 +71,7 @@ const handleChange =(e)=>{
 
 const handleSubmit = (e) => {
   e.preventDefault();
+  dispatch(ClearError());
   const user = {firstName, lastName, email,  password,  phone, date_of_birth}
   if(password !== confirmPassword){
     setPasswordError("passwords don't match");
@@ -294,7 +293,7 @@ const handleCloseNavMenu = () => {
 
           {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'20%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
 <div className="containerss"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!

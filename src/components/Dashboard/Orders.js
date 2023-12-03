@@ -74,6 +74,7 @@ import { jwtDecode } from "jwt-decode"
     const timeout = expiryTime - currentTime;
     const onExpire = () => {
       dispatch(LoggedOut());
+      sessionStorage.clear()
        navigate('/');
     };
   

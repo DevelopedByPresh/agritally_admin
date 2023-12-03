@@ -1,7 +1,7 @@
 import  React,{useState, useEffect} from 'react';
 
 
-import VisibilityIcon from '@mui/icons-material/Visibility';
+// import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -26,7 +26,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Card from '@mui/material/Card';
-import FormControl, { useFormControl } from '@mui/material/FormControl';
+import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 
 import InputLabel from '@mui/material/InputLabel';
@@ -81,33 +81,43 @@ import { jwtDecode } from "jwt-decode"
       },[])
 
 
-      useEffect(() => {
-        let timerRef = null;
-      
-        const decoded = jwtDecode(token);
-      
-        const expiryTime = (new Date(decoded.exp * 1000)).getTime();
-        const currentTime = (new Date()).getTime();
-      
-        const timeout = expiryTime - currentTime;
-        const onExpire = () => {
-          dispatch(LoggedOut());
-           navigate('/');
-        };
-      
-        if (timeout > 0) {
-          // token not expired, set future timeout to log out and redirect
-          timerRef = setTimeout(onExpire, timeout);
-        } else {
-          // token expired, log out and redirect
-          onExpire();
-        }
-      
-        // Clear any running timers on component unmount or token state change
-        return () => {
-          clearTimeout(timerRef);
-        };
-      }, [dispatch, navigate, token]);
+    
+useEffect(() => {
+  let timerRef = null;
+
+  if(token){
+
+  
+
+  const decoded = jwtDecode(token);
+
+  const expiryTime = (new Date(decoded.exp * 1000)).getTime();
+  const currentTime = (new Date()).getTime();
+
+  const timeout = expiryTime - currentTime;
+  const onExpire = () => {
+    dispatch(LoggedOut());
+    sessionStorage.clear()
+     navigate('/');
+  };
+
+  if (timeout > 0) {
+    // token not expired, set future timeout to log out and redirect
+    timerRef = setTimeout(onExpire, timeout);
+  } else {
+    // token expired, log out and redirect
+    onExpire();
+  }
+
+  // Clear any running timers on component unmount or token state change
+  return () => {
+    clearTimeout(timerRef);
+  };
+
+
+}
+}, [dispatch, navigate, token]);
+
       
 
   

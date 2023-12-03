@@ -99,8 +99,6 @@ export const EggRecordUpdated = (data)=>({type:TYPES.UPDATE_EGG_RECORD, payload:
 export const EggRecordDeleted = (data)=>({type:TYPES.DELETE_EGG_RECORD, payload:data});
 export const EggStatGotten = (data)=>({type:TYPES.GET_EGG_STATISTICS, payload:data});
 
-
-
 // EVERYTHING THAT HAS TO DO WITH EGG RECORD END
 
 
@@ -112,10 +110,31 @@ export const PigRecordGotten = (data)=>({type:TYPES.GET_PIG_RECORD, payload:data
 export const PigRecordUpdated = (data)=>({type:TYPES.UPDATE_PIG_RECORD, payload:data});
 export const PigRecordDeleted = (data)=>({type:TYPES.DELETE_PIG_RECORD, payload:data});
 
-
-
-
 // EVERYTHING THAT HAS TO DO WITH EGG RECORD END
+
+
+
+
+// EVERYTHING THAT HAS TO DO WITH POULTRY RECORD START
+export const PoultryRecord = (data)=>({type:TYPES.CREATE_POULTRY_RECORD, payload:data});
+export const PoultryRecordGotten = (data)=>({type:TYPES.GET_POULTRY_RECORD, payload:data});
+export const PoultryRecordUpdated = (data)=>({type:TYPES.UPDATE_POULTRY_RECORD, payload:data});
+export const PoultryRecordDeleted = (data)=>({type:TYPES.DELETE_POULTRY_RECORD, payload:data});
+
+// EVERYTHING THAT HAS TO DO WITH POULTRY RECORD END
+
+
+
+
+
+// EVERYTHING THAT HAS TO DO WITH FISH RECORD START
+export const FishRecord = (data)=>({type:TYPES.CREATE_FISH_RECORD, payload:data});
+export const FishRecordGotten = (data)=>({type:TYPES.GET_FISH_RECORD, payload:data});
+export const FishRecordUpdated = (data)=>({type:TYPES.UPDATE_FISH_RECORD, payload:data});
+export const FishRecordDeleted = (data)=>({type:TYPES.DELETE_FISH_RECORD, payload:data});
+
+// EVERYTHING THAT HAS TO DO WITH FISH RECORD END
+
 
 
 
@@ -171,7 +190,7 @@ export const CreateAdmin = (data) => (dispatch) => {
   
       })
       .catch((error) => {
-        dispatch(Error(error?.response?.data?.error))
+        dispatch(Error(error?.response?.data?.message))
       
         
       });
@@ -811,6 +830,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     axios.get(`http://localhost:5000/cart/getAll/`, { headers: authorization })
       .then((response) => {
         dispatch(AllCarts(response?.data?.data));
+      
    
     
      
@@ -1073,6 +1093,7 @@ export const CreateAdmin = (data) => (dispatch) => {
    axios.get(`http://localhost:5000/egg`,  { headers: authorization })
      .then((response) => {
        dispatch(EggRecordGotten(response?.data?.data));
+   
      
     
   
@@ -1118,7 +1139,7 @@ const  id= sessionStorage.getItem('EggUpdateId')
 
     })
     .catch((error) => {
-      dispatch(Error(error?.response?.data?.error))
+      dispatch(Error(error?.response?.data?.message))
    
 
 
@@ -1322,7 +1343,7 @@ const  id= sessionStorage.getItem('PigUpdateId')
 
     })
     .catch((error) => {
-      dispatch(Error(error?.response?.data?.error))
+      dispatch(Error(error?.response?.data?.message))
    
 
 
@@ -1366,11 +1387,313 @@ const  id= sessionStorage.getItem('PigId')
 };
 
 
-
-
-
-
-
-
-
   // EVERYTHING THAT HAS TO DO WITH PIG RECORD END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  // EVERYTHING THAT HAS TO DO WITH POULTRY RECORD START
+
+
+
+  export const CreatePoultryRecord = (data) => (dispatch) => {
+    dispatch(isLoading());
+   const AdminToken = sessionStorage.getItem('AdminToken');
+
+   const authorization = {
+     "Content-Type": "application/json",
+      Authorization: ` Bearer ${AdminToken}`,
+   }
+
+  
+    axios.post(`http://localhost:5000/poultry/`, data, { headers: authorization })
+      .then((response) => {
+        dispatch(PoultryRecord(response?.data?.message));
+        dispatch(GetPoultryRecord());
+   
+   
+   
+    
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.message))
+    
+   
+ 
+  
+        
+      });
+  };
+ 
+
+
+
+
+  export const GetPoultryRecord = () => (dispatch) => {
+  // dispatch(isLoading());
+  const AdminToken = sessionStorage.getItem('AdminToken');
+
+
+  const authorization = {
+    "Content-Type": "application/json",
+     Authorization: ` Bearer ${AdminToken}`,
+  }
+
+ 
+   axios.get(`http://localhost:5000/poultry`,  { headers: authorization })
+     .then((response) => {
+       dispatch(PoultryRecordGotten(response?.data?.data));
+     
+    
+  
+   
+ 
+     })
+     .catch((error) => {
+       dispatch(Error(error?.response?.data?.error))
+     
+
+ 
+       
+     });
+ };
+
+
+
+
+ export const UpdatePoultryRecord = (data) => (dispatch) => {
+  dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('PoultryUpdateId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.patch(`http://localhost:5000/poultry/${id}`,data,  { headers: authorization })
+    .then((response) => {
+      dispatch(PoultryRecordUpdated(response?.data?.message));
+      dispatch(GetPoultryRecord());
+     
+  
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.message))
+   
+
+
+      
+    });
+};
+
+
+
+
+
+export const DeletePoultryRecord = () => (dispatch) => {
+ // dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('PoultryId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.delete(`http://localhost:5000/poultry/${id}`,  { headers: authorization })
+    .then((response) => {
+      dispatch(PoultryRecordDeleted(response?.data?.message));
+      dispatch(GetPoultryRecord());
+   
+
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.error))
+ 
+ 
+
+
+      
+    });
+};
+
+
+  // EVERYTHING THAT HAS TO DO WITH POULTRY RECORD END
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  // EVERYTHING THAT HAS TO DO WITH fish RECORD START
+
+
+
+  export const CreateFishRecord = (data) => (dispatch) => {
+    dispatch(isLoading());
+   const AdminToken = sessionStorage.getItem('AdminToken');
+
+   const authorization = {
+     "Content-Type": "application/json",
+      Authorization: ` Bearer ${AdminToken}`,
+   }
+
+  
+    axios.post(`http://localhost:5000/fish/`, data, { headers: authorization })
+      .then((response) => {
+        dispatch(FishRecord(response?.data?.message));
+        dispatch(GetFishRecord());
+   
+   
+   
+    
+  
+      })
+      .catch((error) => {
+        dispatch(Error(error?.response?.data?.message))
+    
+   
+ 
+  
+        
+      });
+  };
+ 
+
+
+
+
+  export const GetFishRecord = () => (dispatch) => {
+  // dispatch(isLoading());
+  const AdminToken = sessionStorage.getItem('AdminToken');
+
+
+  const authorization = {
+    "Content-Type": "application/json",
+     Authorization: ` Bearer ${AdminToken}`,
+  }
+
+ 
+   axios.get(`http://localhost:5000/fish`,  { headers: authorization })
+     .then((response) => {
+       dispatch(FishRecordGotten(response?.data?.data));
+     
+    
+  
+   
+ 
+     })
+     .catch((error) => {
+       dispatch(Error(error?.response?.data?.error))
+     
+
+ 
+       
+     });
+ };
+
+
+
+
+ export const UpdateFishRecord = (data) => (dispatch) => {
+  dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('FishUpdateId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.patch(`http://localhost:5000/fish/${id}`,data,  { headers: authorization })
+    .then((response) => {
+      dispatch(FishRecordUpdated(response?.data?.message));
+      dispatch(GetFishRecord());
+     
+  
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.message))
+   
+
+
+      
+    });
+};
+
+
+
+
+
+export const DeleteFishRecord = () => (dispatch) => {
+ // dispatch(isLoading());
+ const AdminToken = sessionStorage.getItem('AdminToken');
+const  id= sessionStorage.getItem('FishId')
+
+ const authorization = {
+   "Content-Type": "application/json",
+    Authorization: ` Bearer ${AdminToken}`,
+ }
+
+
+  axios.delete(`http://localhost:5000/fish/${id}`,  { headers: authorization })
+    .then((response) => {
+      dispatch(FishRecordDeleted(response?.data?.message));
+      dispatch(GetFishRecord());
+   
+
+ 
+  
+
+    })
+    .catch((error) => {
+      dispatch(Error(error?.response?.data?.error))
+ 
+ 
+
+
+      
+    });
+};
+
+
+  // EVERYTHING THAT HAS TO DO WITH Fish RECORD END

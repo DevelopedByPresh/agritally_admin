@@ -63,6 +63,10 @@ import { jwtDecode } from "jwt-decode"
   useEffect(() => {
     let timerRef = null;
   
+    if(token){
+  
+    
+  
     const decoded = jwtDecode(token);
   
     const expiryTime = (new Date(decoded.exp * 1000)).getTime();
@@ -71,6 +75,7 @@ import { jwtDecode } from "jwt-decode"
     const timeout = expiryTime - currentTime;
     const onExpire = () => {
       dispatch(LoggedOut());
+      sessionStorage.clear()
        navigate('/');
     };
   
@@ -86,7 +91,11 @@ import { jwtDecode } from "jwt-decode"
     return () => {
       clearTimeout(timerRef);
     };
+  
+  
+  }
   }, [dispatch, navigate, token]);
+  
   
 
 

@@ -6,12 +6,8 @@ import ForgotPassword from "./components/ForgotPassword/ForgotPassword"
 import Login from "./components/Login/Login"
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-// import Dashboard from "./components/Dashboard/Dashboard";
-//  import AdminProfile from "./components/AdminProfile/AdminProfile";
  import PrivateRoute from "./components/PrivateRoute";
-// import Users from "./components/Dashboard/Users";
-// import AllProductReport from "./components/Dashboard/AllProductReport";
+
 
 
 const  Dashboard = lazy(()=> import("./components/Dashboard/Dashboard"))
@@ -22,6 +18,7 @@ const  Orders = lazy(()=> import("./components/Dashboard/Orders"))
 const  Carts = lazy(()=> import("./components/Dashboard/Carts"))
 const  Transactions = lazy(()=> import("./components/Dashboard/Transactions"))
 const  AllProductReport = lazy(()=> import("./components/Dashboard/AllProductReport"))
+const  NotFound = lazy(()=> import("./components/NotFound/NotFound"))
 
 
 
@@ -51,6 +48,7 @@ function App() {
             <Route element={<Login/>} path="/"/>
             <Route exact path='/SignUp' element={<SignUp/>}/>
             <Route path="/ForgotPassword" element={<ForgotPassword/>}/>
+            <Route path="*" element={<NotFound/>}/>
           </Routes>
           </Suspense>
       </Router>

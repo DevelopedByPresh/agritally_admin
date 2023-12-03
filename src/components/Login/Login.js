@@ -3,17 +3,12 @@
 
 
 import * as React from 'react';
-// import Avatar from '@mui/material/Avatar';
+
 import Button from '@mui/material/Button';
-// import CssBaseline from '@mui/material/CssBaseline';
-// import TextField from '@mui/material/TextField';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
-// // import Link from '@mui/material/Link';
-// import Paper from '@mui/material/Paper';
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+
 import Typography from '@mui/material/Typography';
 import { createTheme, } from '@mui/material/styles';
 import {Link, useNavigate} from "react-router-dom"
@@ -31,7 +26,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { useSelector, useDispatch } from 'react-redux'
 import {LoginAdmin, ClearError, ClearMessage} from "../../Actions/Actions"
-import TextField from '@mui/material/TextField';
+
 import "./Login.css"
 
 
@@ -47,6 +42,8 @@ export default function Login() {
   const errors = useSelector((state)=>state?.Admin?.error)
   const auth = useSelector((state)=>state?.Admin?.Authenticated)
    const loading = useSelector((state)=>state?.Admin?.loading)
+
+  
 
 
 
@@ -82,6 +79,7 @@ const handleSubmit = (e) => {
   e.preventDefault();
   const email = Email
   const User = {email, password}
+  dispatch(ClearError());
   if(Email){
     dispatch(LoginAdmin(User))
   }else{
@@ -179,7 +177,7 @@ const handleCloseUserMenu = () => {
     <Typography
       variant="h6"
       noWrap
-      component="a"
+    //  component="a"
    
       sx={{
         mr: 2,
@@ -187,6 +185,7 @@ const handleCloseUserMenu = () => {
         fontFamily: 'sans-serif',
         fontWeight: 700,
         letterSpacing: '.2rem',
+        color:'white',
   
         textDecoration: 'none',
   
@@ -277,7 +276,7 @@ const handleCloseUserMenu = () => {
     <div className="row d-flex justify-content-center">
       <div className="col-lg-8">
        <Typography variant="h5" component="div" sx={{textAlign:'center', color:'white',  fontWeight:50}} >
-       Welcome Back  
+        Hi there, Welcome Back! 
        </Typography>
         <h2 className="fw-bold mb-5" style={{color:'white'}}>Login</h2>
  
