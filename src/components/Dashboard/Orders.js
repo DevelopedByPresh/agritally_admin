@@ -127,7 +127,7 @@ const [openDeleteOrder, setOpenDeleteOrder] = useState(false);
 const [singleOrder, setSingleOrder] = useState({})
 
 
-const dateOfEntry = singleOrder?.createdAt
+const dateOfEntry = singleOrder?.updatedAt
 const FormattedDate = (new Date(dateOfEntry))?.toString();
 
 const [order, setOrder] = useState({
@@ -435,7 +435,7 @@ const handleClickCloseDeleteOrder = () => {
    const data =
    orders &&
    orders?.map((order) => {
-    var date = order?.createdAt,
+    var date = order?.updatedAt,
     newDate = (new Date(date))?.toString();
    
      return {
@@ -716,13 +716,13 @@ const handleClickCloseDeleteOrder = () => {
 
 
           <DialogContentText id="alert-dialog-description">
-          Product Ordered : {singleOrder?.cartId?.cartItems?.[0]?.productId?.category}
+          Product Ordered : {singleOrder?.cartId?.cartItems?.[0]?.productId[0]?.category}
           </DialogContentText>
           <br/>
 
 
           <DialogContentText id="alert-dialog-description">
-          Product section : {singleOrder?.cartId?.cartItems?.[0]?.productId?.section}
+          Product section : {singleOrder?.cartId?.cartItems?.[0]?.productId[0]?.section}
           </DialogContentText>
           <br/>
 
@@ -802,7 +802,7 @@ const handleClickCloseDeleteOrder = () => {
 
 {message && 
 
-<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
+<div className="alert success alert-success alert-dismissible" role="alert" style={{width:'60%', margin:'0px auto'}}>
 <div className="container"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
 
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!

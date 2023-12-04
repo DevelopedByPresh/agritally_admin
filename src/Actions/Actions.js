@@ -164,7 +164,7 @@ export const ClearError = () => (dispatch) => {
 
 export const CreateAdmin = (data) => (dispatch) => {
     dispatch(isLoading());
-    axios.post(`http://localhost:5000/admin/register`, data,)
+    axios.post(`${process.env.REACT_APP_API}/admin/register`, data,)
       .then((response) => {
         dispatch(AdminCreated(response?.data?.data?.message));
      
@@ -179,7 +179,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
   export const LoginAdmin = (data) => (dispatch) => {
     dispatch(isLoading());
-    axios.post(`http://localhost:5000/admin/login`, data,)
+    axios.post(`${process.env.REACT_APP_API}/admin/login`, data,)
       .then((response) => {
         dispatch(LoggedIn(response?.data?.data?.message));
         sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
@@ -218,7 +218,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/product/getAll/?category=Poultry`,  { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/product/getAll/?category=Poultry`,  { headers: authorization })
       .then((response) => {
         dispatch(PoultryProducts(response?.data?.data));
    
@@ -249,7 +249,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/product/getAll/?category=Pig`,  { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/product/getAll/?category=Pig`,  { headers: authorization })
       .then((response) => {
         dispatch(PigProducts(response?.data?.data));
   
@@ -275,7 +275,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/product/getAll/?category=Egg`,  { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/product/getAll/?category=Egg`,  { headers: authorization })
       .then((response) => {
         dispatch(EggProducts(response?.data?.data));
 
@@ -304,7 +304,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: ` Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/product/getAll/?category=Cat-fish`,  { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/product/getAll/?category=Cat-fish`,  { headers: authorization })
       .then((response) => {
         dispatch(CatFishProducts(response?.data?.data));
     
@@ -332,7 +332,7 @@ export const CreateAdmin = (data) => (dispatch) => {
         Authorization: `Bearer ${AdminToken}`,
      };
    
-     axios.get(`http://localhost:5000/product/getAll`, { headers: authorization })
+     axios.get(`${process.env.REACT_APP_API}/product/getAll`, { headers: authorization })
        .then((response) => {
          dispatch(AllProducts(response?.data?.data));
        
@@ -367,7 +367,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: `Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/user/getAll`, { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/user/getAll`, { headers: authorization })
       .then((response) => {
         dispatch(AllStaff(response?.data?.data));
       
@@ -397,7 +397,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: `Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/admin/getAll`, { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/admin/getAll`, { headers: authorization })
       .then((response) => {
         dispatch(AllAdmin(response?.data?.data));
  
@@ -427,7 +427,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: `Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/admin/get/${id}`, { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/admin/get/${id}`, { headers: authorization })
       .then((response) => {
         dispatch(AdminGotten(response?.data?.data));
         sessionStorage.setItem('UpdateAdmin', JSON.stringify(response?.data?.data))
@@ -468,7 +468,7 @@ export const CreateAdmin = (data) => (dispatch) => {
   
 
     dispatch(isLoading());
-    axios.delete(`http://localhost:5000/product/delete/${id}`, { headers: authorization } )
+    axios.delete(`${process.env.REACT_APP_API}/product/delete/${id}`, { headers: authorization } )
       .then((response) => {
         dispatch(ProductDeleted(response?.data?.message));
 
@@ -510,7 +510,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     }
 
     dispatch(isLoading());
-    axios.delete(`http://localhost:5000/user/delete/${id}`, { headers: authorization })
+    axios.delete(`${process.env.REACT_APP_API}/user/delete/${id}`, { headers: authorization })
       .then((response) => {
         dispatch(StaffDeleted(response?.data?.message));
         dispatch(GetAllStaff());
@@ -544,7 +544,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     }
 
     dispatch(isLoading());
-    axios.delete(`http://localhost:5000/admin/delete/${id}`, { headers: authorization })
+    axios.delete(`${process.env.REACT_APP_API}/admin/delete/${id}`, { headers: authorization })
       .then((response) => {
         dispatch(AdminDeleted(response?.data?.message));
         dispatch(GetAllAdmins());
@@ -588,7 +588,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
     dispatch(isLoading());
-    axios.patch(`http://localhost:5000/product/update/${id}`, product,  {headers:authorization})
+    axios.patch(`${process.env.REACT_APP_API}/product/update/${id}`, product,  {headers:authorization})
       .then((response) => {
         dispatch(ProductUpdated(response?.data?.message));
         dispatch(GetPoultryProduct());
@@ -623,7 +623,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
     dispatch(isLoading());
-    axios.patch(`http://localhost:5000/user//update-profile/${id}`, staff,  {headers:authorization})
+    axios.patch(`${process.env.REACT_APP_API}/user//update-profile/${id}`, staff,  {headers:authorization})
       .then((response) => {
         dispatch(StaffUpdated(response?.data?.message));
         dispatch(GetAllStaff());
@@ -656,7 +656,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
     dispatch(isLoading());
-    axios.patch(`http://localhost:5000/admin/update-profile/${id}`, staff,  {headers:authorization})
+    axios.patch(`${process.env.REACT_APP_API}/admin/update-profile/${id}`, staff,  {headers:authorization})
       .then((response) => {
         dispatch(AdminUpdated(response?.data?.message));
         dispatch(GetAllAdmins());
@@ -686,7 +686,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
     dispatch(isLoading());
-    axios.patch(`http://localhost:5000/admin/update-profile/${id}`, profile,  {headers:authorization})
+    axios.patch(`${process.env.REACT_APP_API}/admin/update-profile/${id}`, profile,  {headers:authorization})
       .then((response) => {
         dispatch(ProfileUpdated(response?.data?.message));
         dispatch(GetAdmin());
@@ -724,7 +724,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: `Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/order/getAll/`, { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/order/getAll/`, { headers: authorization })
       .then((response) => {
         dispatch(AllOrders(response?.data?.data));
     
@@ -757,7 +757,7 @@ export const CreateAdmin = (data) => (dispatch) => {
 
 
     //dispatch(isLoading());
-    axios.patch(`http://localhost:5000/order/update/${id}`, order,  {headers:authorization})
+    axios.patch(`${process.env.REACT_APP_API}/order/update/${id}`, order,  {headers:authorization})
       .then((response) => {
         dispatch(OrderUpdated(response?.data?.message));
         dispatch(GetAllOrders());
@@ -785,7 +785,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     }
 
    // dispatch(isLoading());
-    axios.delete(`http://localhost:5000/order/delete/${id}`, { headers: authorization })
+    axios.delete(`${process.env.REACT_APP_API}/order/delete/${id}`, { headers: authorization })
       .then((response) => {
         dispatch(OrderDeleted(response?.data?.message));
         dispatch(GetAllOrders());
@@ -827,7 +827,7 @@ export const CreateAdmin = (data) => (dispatch) => {
        Authorization: `Bearer ${AdminToken}`,
     };
   
-    axios.get(`http://localhost:5000/cart/getAll/`, { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/cart/getAll/`, { headers: authorization })
       .then((response) => {
         dispatch(AllCarts(response?.data?.data));
       
@@ -863,7 +863,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     }
 
     dispatch(isLoading());
-    axios.delete(`http://localhost:5000/cart/delete/${id}`, { headers: authorization })
+    axios.delete(`${process.env.REACT_APP_API}/cart/delete/${id}`, { headers: authorization })
       .then((response) => {
         dispatch(CartDeleted(response?.data?.message));
         dispatch(GetAllCart());
@@ -906,7 +906,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     }
 
    
-     axios.post(`http://localhost:5000/transaction/add`, data, { headers: authorization })
+     axios.post(`${process.env.REACT_APP_API}/transaction/add`, data, { headers: authorization })
        .then((response) => {
          dispatch(TransactionCreated(response?.data?.message));
     
@@ -939,7 +939,7 @@ export const CreateAdmin = (data) => (dispatch) => {
    }
 
   
-    axios.get(`http://localhost:5000/transaction/getAll`,  { headers: authorization })
+    axios.get(`${process.env.REACT_APP_API}/transaction/getAll`,  { headers: authorization })
       .then((response) => {
         dispatch(TransactionGotten(response?.data?.data));
      
@@ -969,7 +969,7 @@ export const CreateAdmin = (data) => (dispatch) => {
    }
 
   
-    axios.patch(`http://localhost:5000/transaction/update/${id}`,data,  { headers: authorization })
+    axios.patch(`${process.env.REACT_APP_API}/transaction/update/${id}`,data,  { headers: authorization })
       .then((response) => {
         dispatch(TransactionUpdated(response?.data?.message));
         dispatch(GetAllTransactions());
@@ -1002,7 +1002,7 @@ export const CreateAdmin = (data) => (dispatch) => {
    }
 
   
-    axios.delete(`http://localhost:5000/transaction/delete/${id}`,  { headers: authorization })
+    axios.delete(`${process.env.REACT_APP_API}/transaction/delete/${id}`,  { headers: authorization })
       .then((response) => {
         dispatch(TransactionDeleted(response?.data?.message));
         dispatch(GetAllTransactions());
@@ -1055,7 +1055,7 @@ export const CreateAdmin = (data) => (dispatch) => {
    }
 
   
-    axios.post(`http://localhost:5000/egg/`, data, { headers: authorization })
+    axios.post(`${process.env.REACT_APP_API}/egg/`, data, { headers: authorization })
       .then((response) => {
         dispatch(EggRecord(response?.data?.message));
         dispatch(GetEggRecord());
@@ -1090,7 +1090,7 @@ export const CreateAdmin = (data) => (dispatch) => {
   }
 
  
-   axios.get(`http://localhost:5000/egg`,  { headers: authorization })
+   axios.get(`${process.env.REACT_APP_API}/egg`,  { headers: authorization })
      .then((response) => {
        dispatch(EggRecordGotten(response?.data?.data));
    
@@ -1128,7 +1128,7 @@ const  id= sessionStorage.getItem('EggUpdateId')
  }
 
 
-  axios.patch(`http://localhost:5000/egg/${id}`,data,  { headers: authorization })
+  axios.patch(`${process.env.REACT_APP_API}/egg/${id}`,data,  { headers: authorization })
     .then((response) => {
       dispatch(EggRecordUpdated(response?.data?.message));
       dispatch(GetEggRecord());
@@ -1162,7 +1162,7 @@ const  id= sessionStorage.getItem('EggId')
  }
 
 
-  axios.delete(`http://localhost:5000/egg/${id}`,  { headers: authorization })
+  axios.delete(`${process.env.REACT_APP_API}/egg/${id}`,  { headers: authorization })
     .then((response) => {
       dispatch(EggRecordDeleted(response?.data?.message));
       dispatch(GetEggRecord());
@@ -1195,7 +1195,7 @@ export const GetEggStat = () => (dispatch) => {
   }
 
  
-   axios.get(`http://localhost:5000/egg/statistics`,  { headers: authorization })
+   axios.get(`${process.env.REACT_APP_API}/egg/statistics`,  { headers: authorization })
      .then((response) => {
        dispatch(EggStatGotten(response?.data?.data));
     
@@ -1260,7 +1260,7 @@ export const GetEggStat = () => (dispatch) => {
    }
 
   
-    axios.post(`http://localhost:5000/pig/`, data, { headers: authorization })
+    axios.post(`${process.env.REACT_APP_API}/pig/`, data, { headers: authorization })
       .then((response) => {
         dispatch(PigRecord(response?.data?.message));
         dispatch(GetPigRecord());
@@ -1295,7 +1295,7 @@ export const GetEggStat = () => (dispatch) => {
   }
 
  
-   axios.get(`http://localhost:5000/pig`,  { headers: authorization })
+   axios.get(`${process.env.REACT_APP_API}/pig`,  { headers: authorization })
      .then((response) => {
        dispatch(PigRecordGotten(response?.data?.data));
      
@@ -1332,7 +1332,7 @@ const  id= sessionStorage.getItem('PigUpdateId')
  }
 
 
-  axios.patch(`http://localhost:5000/pig/${id}`,data,  { headers: authorization })
+  axios.patch(`${process.env.REACT_APP_API}/pig/${id}`,data,  { headers: authorization })
     .then((response) => {
       dispatch(PigRecordUpdated(response?.data?.message));
       dispatch(GetPigRecord());
@@ -1366,7 +1366,7 @@ const  id= sessionStorage.getItem('PigId')
  }
 
 
-  axios.delete(`http://localhost:5000/pig/${id}`,  { headers: authorization })
+  axios.delete(`${process.env.REACT_APP_API}/pig/${id}`,  { headers: authorization })
     .then((response) => {
       dispatch(PigRecordDeleted(response?.data?.message));
       dispatch(GetPigRecord());
@@ -1423,7 +1423,7 @@ const  id= sessionStorage.getItem('PigId')
    }
 
   
-    axios.post(`http://localhost:5000/poultry/`, data, { headers: authorization })
+    axios.post(`${process.env.REACT_APP_API}/poultry/`, data, { headers: authorization })
       .then((response) => {
         dispatch(PoultryRecord(response?.data?.message));
         dispatch(GetPoultryRecord());
@@ -1458,7 +1458,7 @@ const  id= sessionStorage.getItem('PigId')
   }
 
  
-   axios.get(`http://localhost:5000/poultry`,  { headers: authorization })
+   axios.get(`${process.env.REACT_APP_API}/poultry`,  { headers: authorization })
      .then((response) => {
        dispatch(PoultryRecordGotten(response?.data?.data));
      
@@ -1490,7 +1490,7 @@ const  id= sessionStorage.getItem('PoultryUpdateId')
  }
 
 
-  axios.patch(`http://localhost:5000/poultry/${id}`,data,  { headers: authorization })
+  axios.patch(`${process.env.REACT_APP_API}/poultry/${id}`,data,  { headers: authorization })
     .then((response) => {
       dispatch(PoultryRecordUpdated(response?.data?.message));
       dispatch(GetPoultryRecord());
@@ -1524,7 +1524,7 @@ const  id= sessionStorage.getItem('PoultryId')
  }
 
 
-  axios.delete(`http://localhost:5000/poultry/${id}`,  { headers: authorization })
+  axios.delete(`${process.env.REACT_APP_API}/poultry/${id}`,  { headers: authorization })
     .then((response) => {
       dispatch(PoultryRecordDeleted(response?.data?.message));
       dispatch(GetPoultryRecord());
@@ -1574,7 +1574,7 @@ const  id= sessionStorage.getItem('PoultryId')
    }
 
   
-    axios.post(`http://localhost:5000/fish/`, data, { headers: authorization })
+    axios.post(`${process.env.REACT_APP_API}/fish/`, data, { headers: authorization })
       .then((response) => {
         dispatch(FishRecord(response?.data?.message));
         dispatch(GetFishRecord());
@@ -1609,7 +1609,7 @@ const  id= sessionStorage.getItem('PoultryId')
   }
 
  
-   axios.get(`http://localhost:5000/fish`,  { headers: authorization })
+   axios.get(`${process.env.REACT_APP_API}/fish`,  { headers: authorization })
      .then((response) => {
        dispatch(FishRecordGotten(response?.data?.data));
      
@@ -1641,7 +1641,7 @@ const  id= sessionStorage.getItem('FishUpdateId')
  }
 
 
-  axios.patch(`http://localhost:5000/fish/${id}`,data,  { headers: authorization })
+  axios.patch(`${process.env.REACT_APP_API}/fish/${id}`,data,  { headers: authorization })
     .then((response) => {
       dispatch(FishRecordUpdated(response?.data?.message));
       dispatch(GetFishRecord());
@@ -1675,7 +1675,7 @@ const  id= sessionStorage.getItem('FishId')
  }
 
 
-  axios.delete(`http://localhost:5000/fish/${id}`,  { headers: authorization })
+  axios.delete(`${process.env.REACT_APP_API}/fish/${id}`,  { headers: authorization })
     .then((response) => {
       dispatch(FishRecordDeleted(response?.data?.message));
       dispatch(GetFishRecord());

@@ -2545,9 +2545,8 @@ const ApproveEgg = (record)=>{
             
             <div className="page-contents">
 
-
-<Box sx={{ justifyContent: 'center', alignItems:'center', textAlign:"center", mt:2 }}>
-              <FormControl sx={{  width: 600 }}>
+<Box sx={{ justifyContent: 'center', alignItems:'center', textAlign:"center", mt:5 }}>
+              <FormControl sx={{  width: 900 }}>
                 <InputLabel id="demo-multiple-name-label" >Select Product To Enter Record...</InputLabel>
                 <Select
                   sx={{ width: 600, height: 55 }}
@@ -2555,7 +2554,7 @@ const ApproveEgg = (record)=>{
                   id="demo-multiple-name"
                   value={selectedProduct || ""}
                   fullWidth
-              // onFocus={handleFocus}
+               onFocus={handleFocus}
                   input={<OutlinedInput label="Select Product To Enter Record..." />}
                   onChange={(e) => setSelectedProduct(e.target.value)}>
                   {ProductData.product.map((value, key) => (
