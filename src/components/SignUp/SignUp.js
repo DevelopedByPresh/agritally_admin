@@ -452,7 +452,7 @@ const handleCloseNavMenu = () => {
 
       
 
-            <button type="submit" className="btn  btn-block mb-4" style={{backgroundColor: "#012949"}} >
+            <button type="submit" className="btn  btn-block mb-4" style={{backgroundColor: "#012949", color:'white'}} >
               Sign up
             </button>
 
