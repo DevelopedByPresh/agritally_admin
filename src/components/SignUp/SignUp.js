@@ -291,7 +291,7 @@ const handleCloseNavMenu = () => {
           <br/>
 
 
-          {message && 
+          {message && message !== "Email already exists" ?
 
 <div className="alert success alert-success alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>
 <div className="containerss"  style={{textAlign:'center', margin:'0px auto', whiteSpace:'no-wrap'}}>
@@ -299,8 +299,9 @@ const handleCloseNavMenu = () => {
 <strong> <i className="fa fa-thumbs-up" aria-hidden="true"></i></strong> {message}!
 
 </div>
-</div>
+</div>: ""
 }
+
 
 {error &&
 <div className="alert alert-danger danger alert-dismissible" role="alert" style={{width:'40%', margin:'0px auto'}}>

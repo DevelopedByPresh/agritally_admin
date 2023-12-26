@@ -166,12 +166,14 @@ export const CreateAdmin = (data) => (dispatch) => {
     dispatch(isLoading());
     axios.post(`${process.env.REACT_APP_API}/admin/register`, data,)
       .then((response) => {
-        dispatch(AdminCreated(response?.data?.data?.message));
+        dispatch(AdminCreated(response?.data?.message));
+        
      
  
       })
       .catch((error) => {
-        dispatch(Error(error?.response?.data?.message))
+        dispatch(Error(error?.response?.data?.message ))
+        console.log(error.response?.data)
         
       });
   };
@@ -181,7 +183,7 @@ export const CreateAdmin = (data) => (dispatch) => {
     dispatch(isLoading());
     axios.post(`${process.env.REACT_APP_API}/admin/login`, data,)
       .then((response) => {
-        dispatch(LoggedIn(response?.data?.data?.message));
+        dispatch(LoggedIn(response?.data?.message));
         sessionStorage.setItem('Admin', JSON.stringify(response?.data?.data))
         sessionStorage.setItem('AdminToken', response?.data?.data?.accessToken)
     
@@ -190,7 +192,7 @@ export const CreateAdmin = (data) => (dispatch) => {
   
       })
       .catch((error) => {
-        dispatch(Error(error?.response?.data?.message))
+        dispatch(Error(error?.response?.data?.message || error?.response.data?.error))
       
         
       });

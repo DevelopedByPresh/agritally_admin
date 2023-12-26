@@ -54,8 +54,13 @@ import { jwtDecode } from "jwt-decode"
 
 
 
+
   useEffect(() => {
     let timerRef = null;
+  
+    if(token){
+  
+    
   
     const decoded = jwtDecode(token);
   
@@ -81,9 +86,12 @@ import { jwtDecode } from "jwt-decode"
     return () => {
       clearTimeout(timerRef);
     };
+  
+  
+  }
   }, [dispatch, navigate, token]);
   
-
+  
 
 
 
